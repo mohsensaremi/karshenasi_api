@@ -8,7 +8,7 @@
     "start": "NODE_ENV=production NODE_PATH=./dist/ node ./dist/index.js",
     "start_silent": "NODE_ENV=production NODE_PATH=./dist/ pm2 start ./dist/index.js --name 'newsScrapper'",
     "dev": "NODE_ENV=development NODE_PATH=./src/ babel-node ./src/index.js",
-    "test": "NODE_ENV=development NODE_PATH=./src/ jest"
+    "test": "NODE_ENV=test NODE_PATH=./src/ jest"
   },
   "dependencies": {
     "@koa/cors": "^3.0.0",

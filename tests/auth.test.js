@@ -1,24 +1,15 @@
 //routes.test.js
-import request from "supertest";
 import server from "../src/index.js";
 import uuid from 'uuid/v4';
+const  request = require("supertest").agent(server.listen());
 
-beforeAll(async () => {
-    // do something before anything else runs
-    console.log('Jest starting!');
-});
-// close the server after each test
-afterAll(() => {
-    server.close();
-    console.log('server closed!');
-});
 describe('auth route tests', () => {
     const EMAIL = `${uuid()}@gmail.com`;
     const PASS = "pass";
     let TOKEN = null;
 
     test('register', async () => {
-        const response = await request(server).post('/register').send({
+        const response = await request.post('/register').send({
             email: EMAIL,
             password: PASS,
             passwordConfirmation: PASS,
@@ -27,7 +18,7 @@ describe('auth route tests', () => {
     });
 
     test('login', async () => {
-        const response = await request(server).post('/login')
+        const response = await request.post('/login')
             .send({
                 email: EMAIL,
                 password: PASS,
@@ -40,7 +31,7 @@ describe('auth route tests', () => {
     });
 
     test('me', async () => {
-        const response = await request(server)
+        const response = await request
             .get('/me')
             .set('authorization', `Bearer ${TOKEN}`);
 
