@@ -1,0 +1,15 @@
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": {
+          "node": "9.10.1"
+        }
+      }
+    ]
+  ],
+  "plugins": [
+    "@babel/proposal-class-properties"
+  ]
+}
