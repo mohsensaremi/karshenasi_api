@@ -8,7 +8,6 @@ export const UserSchema = new Schema({
     password: {type: String, required: true},
     email: {type: String, required: true},
 }, {
-    collection: 'users',
     toObject: {
         virtuals: true,
         transform: function (doc, ret) {

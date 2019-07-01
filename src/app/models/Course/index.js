@@ -6,7 +6,6 @@ export const CourseSchema = new Schema({
     userId: {type: Schema.Types.ObjectId, required: true},
     password: {type: String},
 }, {
-    collection: 'users',
     toObject: {
         virtuals: true,
         transform: function (doc, ret) {
