@@ -33,6 +33,8 @@ render(app, {
 });
 
 
-app.listen({port: process.env.APP_PORT}, () =>
+const server = app.listen({port: process.env.APP_PORT}, () =>
     console.log(`🚀 Server ready at http://localhost:${process.env.APP_PORT}`),
 );
+
+export default server;

@@ -7,7 +7,8 @@
     "build": "NODE_ENV=production babel src --out-dir ./dist --copy-files",
     "start": "NODE_ENV=production NODE_PATH=./dist/ node ./dist/index.js",
     "start_silent": "NODE_ENV=production NODE_PATH=./dist/ pm2 start ./dist/index.js --name 'newsScrapper'",
-    "dev": "NODE_ENV=development NODE_PATH=./src/ babel-node ./src/index.js"
+    "dev": "NODE_ENV=development NODE_PATH=./src/ babel-node ./src/index.js",
+    "test": "NODE_ENV=development NODE_PATH=./src/ jest"
   },
   "dependencies": {
     "@koa/cors": "^3.0.0",
@@ -37,6 +38,8 @@
     "@babel/core": "^7.4.4",
     "@babel/node": "^7.2.2",
     "@babel/plugin-proposal-class-properties": "^7.4.4",
-    "@babel/preset-env": "^7.4.4"
+    "@babel/preset-env": "^7.4.4",
+    "jest": "^24.8.0",
+    "supertest": "^4.0.2"
   }
 }
