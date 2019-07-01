@@ -1,5 +1,6 @@
 import {Schema} from 'app/mongoose';
 import {conn} from 'config/database';
+import CourseMember from '../CourseMember';
 
 export const CourseSchema = new Schema({
     title: {type: String, required: true},
@@ -19,6 +20,15 @@ export const CourseSchema = new Schema({
         },
     },
 });
+
+CourseSchema.methods.checkUserIsMember = async function (userId) {
+    const count = await CourseMember.find({
+        userId,
+        courseId: this.id,
+    }).countDocuments();
+
+    return count !== 0;
+}
 
 const Course = conn.model('Course', CourseSchema);
 

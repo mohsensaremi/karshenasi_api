@@ -2,7 +2,6 @@ import response from 'app/response';
 import Course from 'app/models/Course';
 import CourseMember from 'app/models/CourseMember';
 import bcrypt from 'bcrypt';
-import mongoose from 'mongoose';
 
 export async function submit(ctx) {
     const {title, password, id} = ctx.request.body;
@@ -14,12 +13,8 @@ export async function submit(ctx) {
     let edit = false;
     let course = new Course();
     if (id) {
-        if (mongoose.Types.ObjectId.isValid(id)) {
-            course = await Course.findById(id);
-            if (!course) {
-                return response.validatorError(ctx, [{me: `course with id:${id} not found`}]);
-            }
-        } else {
+        course = await Course.findById(id);
+        if (!course) {
             return response.validatorError(ctx, [{me: `course with id:${id} not found`}]);
         }
         edit = true;
@@ -98,11 +93,9 @@ export async function joinedCourses(ctx) {
 
     const joinedCoursesPivot = await CourseMember.find({userId});
     const joinedCoursesId = joinedCoursesPivot.map(({courseId}) => courseId);
-    const joinedCourses = await Course.find({
+    const joinedCourses = await Course.dataTable(ctx.query, {
         _id: {$in: joinedCoursesId},
     });
 
-    return response.json(ctx, {
-        list: joinedCourses,
-    });
+    return response.json(ctx, joinedCourses);
 }

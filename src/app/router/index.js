@@ -1,5 +1,6 @@
 import * as AuthController from 'app/controllers/AuthController';
 import * as CourseController from 'app/controllers/CourseController';
+import * as PostController from 'app/controllers/PostController';
 import Router from "koa-router";
 import authMiddleware from 'app/middlewares/auth';
 
@@ -18,5 +19,8 @@ router.post('/course/submit', CourseController.submit);
 router.post('/course/join', CourseController.join);
 router.post('/course/leave', CourseController.leave);
 router.get('/course/joined-courses', CourseController.joinedCourses);
+
+router.post('/post/submit', PostController.submit);
+router.get('/post/posts-by-course-id', PostController.postsByCourseId);
 
 export default router;

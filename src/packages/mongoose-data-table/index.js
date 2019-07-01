@@ -25,6 +25,8 @@ module.exports = exports = function (schema) {
                     $or: searchQuery,
                 };
             }
+        } else {
+            query = find;
         }
 
         return this.find(query).sort({[orderBy]: order}).paginate(limit, skip);

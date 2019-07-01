@@ -11,4 +11,7 @@ module.exports = exports = function (schema) {
 
         return {data, total};
     };
+    schema.statics.emptyPaginate = function () {
+        return {data: [], total: 0};
+    };
 };

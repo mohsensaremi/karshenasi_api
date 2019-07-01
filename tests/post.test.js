@@ -1,13 +1,15 @@
 //routes.test.js
 import server from "../src/index.js";
 import uuid from 'uuid/v4';
-const  request = require("supertest").agent(server.listen());
 
-describe('course route tests', () => {
+const request = require("supertest").agent(server.listen());
+
+describe('post route tests', () => {
     const EMAIL = `test`;
     const PASS = "test";
     let TOKEN = null;
     let CREATED_ID = null;
+    let CREATED_COURSE_ID = null;
 
     test('login', async () => {
         const response = await request.post('/login')
@@ -24,20 +26,48 @@ describe('course route tests', () => {
         const response = await request
             .post('/course/submit')
             .send({
-                title: `course_${uuid()}`,
+                title: `post_course_${uuid()}`,
             })
             .set('authorization', `Bearer ${TOKEN}`);
+
+        expect(response.body.success).toEqual(true);
+
+        CREATED_COURSE_ID = response.body.data.id;
+    });
+
+    test('create post', async () => {
+        const response = await request
+            .post('/post/submit')
+            .send({
+                title: `post_${uuid()}`,
+                courseId: CREATED_COURSE_ID,
+            })
+            .set('authorization', `Bearer ${TOKEN}`)
 
         expect(response.body.success).toEqual(true);
 
         CREATED_ID = response.body.data.id;
     });
 
-    test(`edit course ${CREATED_ID}`, async () => {
+    test('create post with content', async () => {
         const response = await request
-            .post('/course/submit')
+            .post('/post/submit')
             .send({
-                title: `course_${uuid()}`,
+                title: `post_${uuid()}`,
+                content: `post_content_${uuid()}`,
+                courseId: CREATED_COURSE_ID,
+            })
+            .set('authorization', `Bearer ${TOKEN}`);
+
+        expect(response.body.success).toEqual(true);
+    });
+
+    test(`edit post ${CREATED_ID}`, async () => {
+        const response = await request
+            .post('/post/submit')
+            .send({
+                title: `post_edited_${uuid()}`,
+                content: `post_content_edited_${uuid()}`,
                 id: CREATED_ID,
             })
             .set('authorization', `Bearer ${TOKEN}`);
@@ -46,65 +76,39 @@ describe('course route tests', () => {
         expect(response.body.data.edit).toEqual(true);
     });
 
-    test('create course with password', async () => {
+    test('get not joined course posts', async () => {
         const response = await request
-            .post('/course/submit')
-            .send({
-                title: `course_${uuid()}`,
-                password: "test",
+            .get(`/post/posts-by-course-id`)
+            .query({
+                courseId: CREATED_COURSE_ID,
             })
             .set('authorization', `Bearer ${TOKEN}`);
+
 
         expect(response.body.success).toEqual(true);
+        expect(response.body.data.total).toEqual(0);
     });
 
-    test('edit with wring id', async () => {
-        const response = await request
-            .post('/course/submit')
-            .send({
-                title: `course_${uuid()}`,
-                id: "507f1f77bcf86cd799439011", // sample id
-            })
-            .set('authorization', `Bearer ${TOKEN}`);
-
-        expect(response.body.success).toEqual(false);
-    });
-
-    test(`join course ${CREATED_ID}`, async () => {
+    test(`join course ${CREATED_COURSE_ID}`, async () => {
         const response = await request
             .post('/course/join')
             .send({
-                courseId: CREATED_ID,
+                courseId: CREATED_COURSE_ID,
             })
             .set('authorization', `Bearer ${TOKEN}`);
 
         expect(response.body.success).toEqual(true);
     });
 
-    test(`get joined courses after join`, async () => {
+    test('get joined course posts', async () => {
         const response = await request
-            .get('/course/joined-courses')
-            .set('authorization', `Bearer ${TOKEN}`);
-
-        expect(response.body.success).toEqual(true);
-    });
-
-    test(`leave course ${CREATED_ID}`, async () => {
-        const response = await request
-            .post('/course/leave')
-            .send({
-                courseId: CREATED_ID,
+            .get('/post/posts-by-course-id')
+            .query({
+                courseId: CREATED_COURSE_ID,
             })
             .set('authorization', `Bearer ${TOKEN}`);
 
         expect(response.body.success).toEqual(true);
-    });
-
-    test(`get joined courses after leave`, async () => {
-        const response = await request
-            .get('/course/joined-courses')
-            .set('authorization', `Bearer ${TOKEN}`);
-
-        expect(response.body.success).toEqual(true);
+        expect(response.body.data.total).toEqual(2);
     });
 });
