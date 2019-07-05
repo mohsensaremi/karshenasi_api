@@ -22,6 +22,9 @@ export async function login(ctx) {
 export async function register(ctx) {
     const {email, password, passwordConfirmation} = ctx.request.body;
 
+    ctx.checkBody('firstName').notEmpty("وارد کردن نام اجباری است");
+    ctx.checkBody('lastName').notEmpty("وارد کردن نام خانوادگی اجباری است");
+    ctx.checkBody('type').notEmpty("وارد کردن نوع کاربری اجباری است");
     ctx.checkBody('email').notEmpty("وارد کردن ایمیل اجباری است");
     ctx.checkBody('password').notEmpty("وارد کردن کلمه عبور اجباری است");
     if (ctx.errors) {

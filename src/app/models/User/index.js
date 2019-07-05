@@ -2,9 +2,15 @@ import {Schema} from 'app/mongoose';
 import {conn} from 'config/database';
 import UserToken from 'app/models/UserToken';
 
+export const UserType = {
+    instructor: "instructor",
+    student: "student",
+};
+
 export const UserSchema = new Schema({
-    name: {type: String},
-    family: {type: String},
+    firstName: {type: String},
+    lastName: {type: String},
+    type: {type: String},
     password: {type: String, required: true},
     email: {type: String, required: true},
 }, {

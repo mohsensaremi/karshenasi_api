@@ -1,7 +1,8 @@
 //routes.test.js
 import server from "../src/index.js";
 import uuid from 'uuid/v4';
-const  request = require("supertest").agent(server.listen());
+
+const request = require("supertest").agent(server.listen());
 
 describe('auth route tests', () => {
     const EMAIL = `${uuid()}@gmail.com`;
@@ -13,6 +14,9 @@ describe('auth route tests', () => {
             email: EMAIL,
             password: PASS,
             passwordConfirmation: PASS,
+            firstName: uuid(),
+            lastName: uuid(),
+            type: "instructor",
         });
         expect(response.body.success).toBe(true);
     });
