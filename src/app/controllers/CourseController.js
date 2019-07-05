@@ -99,3 +99,14 @@ export async function joinedCourses(ctx) {
 
     return response.json(ctx, joinedCourses);
 }
+
+
+export async function ownedCourses(ctx) {
+    const userId = ctx.authService.getUserId();
+
+    const joinedCourses = await Course.dataTable(ctx.query, {
+        userId: userId,
+    });
+
+    return response.json(ctx, joinedCourses);
+}

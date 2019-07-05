@@ -110,7 +110,7 @@ class Auth {
         throw new Error(`ایمیل یا کلمه عبور اشتباه است`);
     }
 
-    async attemptRegister(email, password) {
+    async attemptRegister(email, password, other = {}) {
         const duplicate = await User.findOne({
             email
         });
@@ -119,6 +119,7 @@ class Auth {
         }
 
         const user = new User({
+            ...other,
             email,
             password: bcrypt.hashSync(password, 10),
         });

@@ -21,6 +21,11 @@ export const CourseSchema = new Schema({
     },
 });
 
+
+CourseSchema.virtual('hasPassword').get(function () {
+    return !!this.password;
+});
+
 CourseSchema.methods.checkUserIsMember = async function (userId) {
     const count = await CourseMember.find({
         userId,
@@ -28,7 +33,7 @@ CourseSchema.methods.checkUserIsMember = async function (userId) {
     }).countDocuments();
 
     return count !== 0;
-}
+};
 
 const Course = conn.model('Course', CourseSchema);
 

@@ -19,6 +19,7 @@ router.post('/course/submit', CourseController.submit);
 router.post('/course/join', CourseController.join);
 router.post('/course/leave', CourseController.leave);
 router.get('/course/joined-courses', CourseController.joinedCourses);
+router.get('/course/owned-courses', CourseController.ownedCourses);
 
 router.post('/post/submit', PostController.submit);
 router.get('/post/posts-by-course-id', PostController.postsByCourseId);
