@@ -28,6 +28,15 @@ export const UserSchema = new Schema({
     },
 });
 
+UserSchema.virtual('typeFa').get(function () {
+    switch (this.type) {
+        case UserType.instructor:
+            return "استاد";
+        case UserType.student:
+            return "دانشجو";
+    }
+});
+
 UserSchema.methods.generateToken = async function () {
     return await UserToken.generateTokenFor(this);
 };
