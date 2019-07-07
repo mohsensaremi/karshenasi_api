@@ -32,7 +32,21 @@ export async function submit(ctx) {
     return response.json(ctx, {
         id: course.id,
         edit,
+        data: course,
     });
+}
+
+export async function single(ctx) {
+    const {id, withUser} = ctx.query;
+    const query = Course.findById(id);
+
+    if (withUser) {
+        query.populate('user')
+    }
+
+    const data = await query.exec();
+
+    return response.json(ctx, data);
 }
 
 export async function join(ctx) {

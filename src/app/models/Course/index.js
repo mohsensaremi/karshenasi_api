@@ -22,9 +22,21 @@ export const CourseSchema = new Schema({
 });
 
 
+CourseSchema.virtual('user', {
+    ref: 'User',
+    localField: 'userId',
+    foreignField: '_id',
+    justOne: true,
+});
+
+
 CourseSchema.virtual('hasPassword').get(function () {
     return !!this.password;
 });
+
+CourseSchema.methods.checkUserIsOwner = async function (userId) {
+    return userId == this.userId;
+};
 
 CourseSchema.methods.checkUserIsMember = async function (userId) {
     const count = await CourseMember.find({

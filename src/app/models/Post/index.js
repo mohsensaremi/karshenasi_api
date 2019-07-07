@@ -2,7 +2,11 @@ import {Schema} from 'app/mongoose';
 import {conn} from 'config/database';
 
 export const PostType = {
-    simple: 'simple',
+    alert: "alert",
+    assignment: "assignment",
+    attendance: "attendance",
+    project: "project",
+    grade: "grade",
 };
 
 export const PostSchema = new Schema({
