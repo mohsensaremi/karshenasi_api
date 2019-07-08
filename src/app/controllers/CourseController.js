@@ -70,7 +70,7 @@ export async function join(ctx) {
     }
 
     if (course.hasPassword) {
-        if (!bcrypt.compareSync(course.password, password)) {
+        if (!bcrypt.compareSync(password, course.password)) {
             return response.validatorError(ctx, [{me: `کلمه عبور کلاس اشتباه است`}]);
         }
     }
@@ -78,7 +78,7 @@ export async function join(ctx) {
     const record = new CourseMember({courseId, userId});
     await record.save();
 
-    course.populate('user');
+    await Course.populate(course, 'user');
 
     return response.json(ctx, {
         id: record.id,
