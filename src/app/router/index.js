@@ -22,6 +22,7 @@ router.post('/course/leave', userTypeMiddleware(['student']), CourseController.l
 router.get('/course/joined-courses', userTypeMiddleware(['student']), CourseController.joinedCourses);
 router.get('/course/owned-courses', userTypeMiddleware(['instructor']), CourseController.ownedCourses);
 router.get('/course/single', CourseController.single);
+router.get('/course/similar', CourseController.similar);
 
 router.post('/post/submit', userTypeMiddleware(['instructor']), PostController.submit);
 router.get('/post/posts-by-course-id', PostController.postsByCourseId);

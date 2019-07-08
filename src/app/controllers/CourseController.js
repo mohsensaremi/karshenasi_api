@@ -2,6 +2,8 @@ import response from 'app/response';
 import Course from 'app/models/Course';
 import CourseMember from 'app/models/CourseMember';
 import bcrypt from 'bcrypt';
+import * as regexUtil from 'utils/regex';
+import pick from 'lodash/pick';
 
 export async function submit(ctx) {
     const {title, password, id} = ctx.request.body;
@@ -50,7 +52,7 @@ export async function single(ctx) {
 }
 
 export async function join(ctx) {
-    const {courseId} = ctx.request.body;
+    const {courseId, password} = ctx.request.body;
     const userId = ctx.authService.getUserId();
 
     ctx.checkBody('courseId').notEmpty("courseId is required");
@@ -65,6 +67,12 @@ export async function join(ctx) {
     const course = await Course.findById(courseId);
     if (!course) {
         return response.validatorError(ctx, [{me: `کلاس وجود تدارد`}]);
+    }
+
+    if (course.hasPassword) {
+        if (!bcrypt.compareSync(course.password, password)) {
+            return response.validatorError(ctx, [{me: `کلمه عبور کلاس اشتباه است`}]);
+        }
     }
 
     const record = new CourseMember({courseId, userId});
@@ -114,7 +122,6 @@ export async function joinedCourses(ctx) {
     return response.json(ctx, joinedCourses);
 }
 
-
 export async function ownedCourses(ctx) {
     const userId = ctx.authService.getUserId();
 
@@ -123,4 +130,23 @@ export async function ownedCourses(ctx) {
     });
 
     return response.json(ctx, joinedCourses);
+}
+
+export async function similar(ctx) {
+    const {input} = ctx.query;
+
+    if (input) {
+        const data = await Course.find({
+            title: new RegExp(regexUtil.startOfWordInAnyOrder(input), "i"),
+        }).populate('user');
+
+        return response.json(ctx,
+            data.map(x => pick(x, [
+                '_id', 'id', 'title', 'hasPassword',
+                'user._id', 'user.id', 'user.firstName', 'user.lastName'
+            ]))
+        );
+    }
+
+    return response.json(ctx, []);
 }
