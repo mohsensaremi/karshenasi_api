@@ -3,6 +3,7 @@ import * as CourseController from 'app/controllers/CourseController';
 import * as PostController from 'app/controllers/PostController';
 import Router from "koa-router";
 import authMiddleware from 'app/middlewares/auth';
+import userTypeMiddleware from 'app/middlewares/userType';
 
 const router = new Router();
 
@@ -15,14 +16,14 @@ router.use(authMiddleware);
 router.get('/me', AuthController.me);
 router.post('/logout', AuthController.logout);
 
-router.post('/course/submit', CourseController.submit);
-router.post('/course/join', CourseController.join);
-router.post('/course/leave', CourseController.leave);
-router.get('/course/joined-courses', CourseController.joinedCourses);
-router.get('/course/owned-courses', CourseController.ownedCourses);
+router.post('/course/submit', userTypeMiddleware(['instructor']), CourseController.submit);
+router.post('/course/join', userTypeMiddleware(['student']), CourseController.join);
+router.post('/course/leave', userTypeMiddleware(['student']), CourseController.leave);
+router.get('/course/joined-courses', userTypeMiddleware(['student']), CourseController.joinedCourses);
+router.get('/course/owned-courses', userTypeMiddleware(['instructor']), CourseController.ownedCourses);
 router.get('/course/single', CourseController.single);
 
-router.post('/post/submit', PostController.submit);
+router.post('/post/submit', userTypeMiddleware(['instructor']), PostController.submit);
 router.get('/post/posts-by-course-id', PostController.postsByCourseId);
 
 export default router;

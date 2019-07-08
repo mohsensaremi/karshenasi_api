@@ -18,6 +18,7 @@ UserTokenSchema.statics.generateTokenFor = async function (user) {
     return jwt.sign({
         id: record._id,
         sub: record.sub,
+        type: user.type,
         iat: seconds,
         exp: seconds + (60 * 60 * 24 * 30),
     }, process.env.JWT_SECRET);

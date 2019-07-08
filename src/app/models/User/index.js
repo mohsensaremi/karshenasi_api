@@ -8,9 +8,9 @@ export const UserType = {
 };
 
 export const UserSchema = new Schema({
-    firstName: {type: String},
-    lastName: {type: String},
-    type: {type: String},
+    firstName: {type: String, required: true},
+    lastName: {type: String, required: true},
+    type: {type: String, required: true, enum: Object.values(UserType)},
     password: {type: String, required: true},
     email: {type: String, required: true},
 }, {
@@ -39,6 +39,14 @@ UserSchema.virtual('typeFa').get(function () {
 
 UserSchema.methods.generateToken = async function () {
     return await UserToken.generateTokenFor(this);
+};
+
+UserSchema.methods.isInstructor = function () {
+    return this.type === UserType.instructor;
+};
+
+UserSchema.methods.isStudent = function () {
+    return this.type === UserType.student;
 };
 
 const User = conn.model('User', UserSchema);

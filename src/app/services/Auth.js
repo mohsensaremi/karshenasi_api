@@ -76,8 +76,8 @@ class Auth {
 
     getMinimalUser() {
         if (!this.minimalUser) {
-            const {sub} = this.payload;
-            this.minimalUser = new User({_id: mongoose.Types.ObjectId(sub)});
+            const {sub, type} = this.payload;
+            this.minimalUser = new User({_id: mongoose.Types.ObjectId(sub), type});
         }
 
         return this.minimalUser;
