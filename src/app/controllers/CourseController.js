@@ -78,8 +78,11 @@ export async function join(ctx) {
     const record = new CourseMember({courseId, userId});
     await record.save();
 
+    course.populate('user');
+
     return response.json(ctx, {
         id: record.id,
+        data: course,
     });
 }
 
@@ -118,6 +121,7 @@ export async function joinedCourses(ctx) {
     const joinedCourses = await Course.dataTable(ctx.query, {
         _id: {$in: joinedCoursesId},
     });
+    await Course.populate(joinedCourses.data, 'user');
 
     return response.json(ctx, joinedCourses);
 }
