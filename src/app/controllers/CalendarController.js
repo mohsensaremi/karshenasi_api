@@ -5,7 +5,10 @@ import chunk from 'lodash/chunk';
 export async function getCalendar(ctx) {
     const {month} = ctx.query;
 
-    const startOfMonth = moment().startOf('jMonth');
+    let startOfMonth = moment().startOf('jMonth');
+    if (month) {
+        startOfMonth = moment(month,'YYYY-M-D HH:mm:ss');
+    }
     const jDay = (startOfMonth.day() + 1) % 7;
     const jDaysInMonth = moment.jDaysInMonth(startOfMonth.jYear(), startOfMonth.jMonth());
     const monthDays = [];
@@ -34,9 +37,10 @@ export async function getCalendar(ctx) {
         monthDays.push(x);
     }
 
-    console.log("startOfMonth", jDay, jDaysInMonth)
-
     return response.json(ctx, {
+        nextMonth: moment(startOfMonth).add(jDaysInMonth, 'days').startOf('jMonth').format('YYYY-M-D HH:mm:ss'),
+        prevMonth: moment(startOfMonth).add(-1, 'days').startOf('jMonth').format('YYYY-M-D HH:mm:ss'),
+        monthName: startOfMonth.format("jMMMM"),
         data: chunk(monthDays, 7),
     });
 }
