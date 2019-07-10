@@ -1,6 +1,7 @@
 import * as AuthController from 'app/controllers/AuthController';
 import * as CourseController from 'app/controllers/CourseController';
 import * as PostController from 'app/controllers/PostController';
+import * as CalendarController from 'app/controllers/CalendarController';
 import Router from "koa-router";
 import authMiddleware from 'app/middlewares/auth';
 import userTypeMiddleware from 'app/middlewares/userType';
@@ -26,5 +27,7 @@ router.get('/course/similar', CourseController.similar);
 
 router.post('/post/submit', userTypeMiddleware(['instructor']), PostController.submit);
 router.get('/post/posts-by-course-id', PostController.postsByCourseId);
+
+router.get('/calendar/get', CalendarController.getCalendar);
 
 export default router;
