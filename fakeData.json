@@ -1,0 +1,52 @@
+{
+  "instructors": [
+    {
+      "firstName": "آزاده",
+      "lastName": "منصوری",
+      "email": "mansouri@gmail.com",
+      "courses": [
+        {
+          "title": "مبانی برنامه نویسی"
+        },
+        {
+          "title": "برنامه نویسی پیشرفته"
+        },
+        {
+          "title": "سیگنال سیستم"
+        },
+        {
+          "title": "پردازش تصویر"
+        }
+      ]
+    },
+    {
+      "firstName": "محمد",
+      "lastName": "بینش مروستی",
+      "email": "marvasti@gmail.com",
+      "courses": [
+        {
+          "title": "طراحی سیستم های دیجیتال"
+        }
+      ]
+    },
+    {
+      "firstName": "محمد",
+      "lastName": "لالی",
+      "email": "laali@gmail.com",
+      "courses": [
+        {
+          "title": "مدار منطقی"
+        },
+        {
+          "title": "معماری کامپیوتر"
+        },
+        {
+          "title": "طراحی کامپایلر"
+        },
+        {
+          "title": "آزمایشگاه معماری"
+        }
+      ]
+    }
+  ]
+}
