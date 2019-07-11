@@ -136,6 +136,16 @@ export async function ownedCourses(ctx) {
     return response.json(ctx, joinedCourses);
 }
 
+export async function byUserId(ctx) {
+    const {userId} = ctx.query;
+
+    const courses = await Course.dataTable(ctx.query, {
+        userId: userId,
+    });
+
+    return response.json(ctx, courses);
+}
+
 export async function similar(ctx) {
     const {input} = ctx.query;
 
