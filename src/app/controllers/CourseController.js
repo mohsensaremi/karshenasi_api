@@ -30,6 +30,7 @@ export async function submit(ctx) {
     }
 
     await course.save();
+    course.userIsMember = true;
 
     return response.json(ctx, {
         id: course.id,
@@ -46,7 +47,9 @@ export async function single(ctx) {
         query.populate('user')
     }
 
-    const data = await query.exec();
+    let data = await query.exec();
+    data = await Course.setUserIsMember([data], ctx.authService.getUserId());
+    data = data[0];
 
     return response.json(ctx, data);
 }
@@ -79,6 +82,8 @@ export async function join(ctx) {
     await record.save();
 
     await Course.populate(course, 'user');
+
+    course.userIsMember = true;
 
     return response.json(ctx, {
         id: record.id,
@@ -123,17 +128,27 @@ export async function joinedCourses(ctx) {
     });
     await Course.populate(joinedCourses.data, 'user');
 
+    joinedCourses.data = joinedCourses.data.map(item => {
+        item.userIsMember = true;
+        return item;
+    });
+
     return response.json(ctx, joinedCourses);
 }
 
 export async function ownedCourses(ctx) {
     const userId = ctx.authService.getUserId();
 
-    const joinedCourses = await Course.dataTable(ctx.query, {
+    const ownedCourses = await Course.dataTable(ctx.query, {
         userId: userId,
     });
 
-    return response.json(ctx, joinedCourses);
+    ownedCourses.data = ownedCourses.data.map(item => {
+        item.userIsMember = true;
+        return item;
+    });
+
+    return response.json(ctx, ownedCourses);
 }
 
 export async function byUserId(ctx) {
@@ -142,6 +157,8 @@ export async function byUserId(ctx) {
     const courses = await Course.dataTable(ctx.query, {
         userId: userId,
     });
+    const authUserId = ctx.authService.getUserId();
+    courses.data = await Course.setUserIsMember(courses.data, authUserId);
 
     return response.json(ctx, courses);
 }
@@ -150,9 +167,11 @@ export async function similar(ctx) {
     const {input} = ctx.query;
 
     if (input) {
-        const data = await Course.find({
+        let data = await Course.find({
             title: new RegExp(regexUtil.startOfWordInAnyOrder(input), "i"),
         }).populate('user');
+
+        data = await Course.setUserIsMember(data, ctx.authService.getUserId());
 
         return response.json(ctx,
             data.map(x => pick(x, [

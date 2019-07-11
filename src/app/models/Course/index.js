@@ -1,6 +1,7 @@
 import {Schema} from 'app/mongoose';
 import {conn} from 'config/database';
 import CourseMember from '../CourseMember';
+import keyBy from 'lodash/keyBy';
 
 export const CourseSchema = new Schema({
     title: {type: String, required: true},
@@ -29,10 +30,27 @@ CourseSchema.virtual('user', {
     justOne: true,
 });
 
-
 CourseSchema.virtual('hasPassword').get(function () {
     return !!this.password;
 });
+
+CourseSchema.virtual('userIsMember');
+
+CourseSchema.statics.setUserIsMember = async function (items, userId) {
+
+    const ids = items.map(({_id}) => _id);
+
+    const joinedCourses = await CourseMember.find({
+        userId: userId,
+        courseId: {$in: ids}
+    });
+    const joinedCoursesById = keyBy(joinedCourses, "courseId");
+
+    return items.map(item => {
+        item.userIsMember = !!joinedCoursesById[item.id];
+        return item;
+    });
+};
 
 CourseSchema.methods.checkUserIsOwner = async function (userId) {
     return userId == this.userId;
