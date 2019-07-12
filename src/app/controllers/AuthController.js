@@ -6,9 +6,9 @@ import response from 'app/response';
  * @apiParam {String} email
  * @apiParam {String} password
  * @apiUse SuccessResponse
- * @apiSuccess {String} data.token store it for auth required requests
+ * @apiSuccess {String} token store it for auth required requests
  * @apiSuccessExample example
- * { "success":true, "status": 200, "data": { "token": String } }
+ * { "success":true, "status": 200, "token": String }
  */
 export async function login(ctx) {
     const {email, password} = ctx.request.body;
@@ -39,9 +39,9 @@ export async function login(ctx) {
  * @apiParam {String} lastName
  * @apiParam {String="instructor","student"} type user type
  * @apiUse SuccessResponse
- * @apiSuccess {String} data.token store it for auth required requests
+ * @apiSuccess {String} token store it for auth required requests
  * @apiSuccessExample example
- * { "success":true, "status": 200, "data": { "token": String } }
+ * { "success":true, "status": 200, "token": String }
  */
 export async function register(ctx) {
     const {email, password, passwordConfirmation, ...other} = ctx.request.body;
@@ -75,9 +75,9 @@ export async function register(ctx) {
  * @apiGroup Auth
  * @apiUse AuthHeader
  * @apiUse SuccessResponse
- * @apiSuccess {Object} data.me current authenticated user data
+ * @apiSuccess {Object} me current authenticated user data. check `Model > User`
  * @apiSuccessExample example
- * { "success":true, "status": 200, "data": { "me": Object } }
+ * { "success":true, "status": 200, "me": Object }
  */
 export async function me(ctx) {
     try {
@@ -91,13 +91,14 @@ export async function me(ctx) {
 }
 
 /**
- * @api {post} /refresh refresh an expired token
+ * @api {post} /refresh refresh
+ * @apiDescription an expired token
  * @apiGroup Auth
  * @apiUse AuthHeader
  * @apiUse SuccessResponse
- * @apiSuccess {String} data.token store it for auth required requests
+ * @apiSuccess {String} token store it for auth required requests
  * @apiSuccessExample example
- * { "success":true, "status": 200, "data": { "token": String } }
+ * { "success":true, "status": 200, "token": String }
  * */
 export async function refresh(ctx) {
     try {

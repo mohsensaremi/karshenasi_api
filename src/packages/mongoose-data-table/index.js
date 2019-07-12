@@ -1,5 +1,14 @@
 module.exports = exports = function (schema) {
     schema.statics.dataTable = async function (input, find) {
+        input = {
+            limit: 15,
+            skip: 0,
+            search: null,
+            searchColumns: [],
+            order: 'desc',
+            orderBy: "_id",
+            ...input,
+        };
         let {limit, skip, search, searchColumns, order, orderBy} = input;
         if (search) {
             search = search.trim();

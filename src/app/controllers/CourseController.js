@@ -6,18 +6,19 @@ import * as regexUtil from 'utils/regex';
 import pick from 'lodash/pick';
 
 /**
- * @api {post} /course/submit submit a course. if
+ * @api {post} /course/submit submit
+ * @apiDescription submit a course
  * @apiGroup Course
  * @apiParam {String} title course title
  * @apiParam {String} [id] if provided, course will be edited otherwise create a new course
  * @apiParam {String} [password] if provided, user will be asked to enter this password for join to this course
  * @apiUse AuthHeader
  * @apiUse SuccessResponse
- * @apiSuccess {String} data.id submitted course id
- * @apiSuccess {Boolean} data.edit for check if course created or edited
- * @apiSuccess {Object} data.data submitted course data
+ * @apiSuccess {String} id submitted course id
+ * @apiSuccess {Boolean} edit for check if course created or edited
+ * @apiSuccess {Object} data submitted course data. check `Model > Course`
  * @apiSuccessExample example
- * { "success":true, "status": 200, "data": { "id": String, "edit": Boolean, "data": Object } }
+ * { "success":true, "status": 200, "id": String, "edit": Boolean, "data": Object }
  * */
 export async function submit(ctx) {
     const {title, password, id} = ctx.request.body;
@@ -44,7 +45,8 @@ export async function submit(ctx) {
     }
 
     await course.save();
-    course.userIsMember = true;
+    course.userIsMember = false;
+    course.userIsOwner = true;
 
     return response.json(ctx, {
         id: course.id,
@@ -54,19 +56,18 @@ export async function submit(ctx) {
 }
 
 /**
- * @api {get} /course/single get course data with its id
+ * @api {get} /course/by-id by id
+ * @apiDescription get course data with its id
  * @apiGroup Course
  * @apiParam {String} id course id
- * @apiParam {String} [withUser] if provided, the course owner data will return
+ * @apiParam {String} [withUser] if provided, the course owner data will be returned
  * @apiUse AuthHeader
  * @apiUse SuccessResponse
- * @apiSuccess {Object} data.data course object
- * @apiSuccess {Boolean} data.edit for check if course created or edited
- * @apiSuccess {Object} data.data submitted course data
+ * @apiSuccess {Object} data course object. check `Model > Course`
  * @apiSuccessExample example
- * { "success":true, "status": 200, "data": { "id": String, "edit": Boolean, "data": Object } }
+ * { "success":true, "status": 200, "id": String, "edit": Boolean, "data": Object }
  * */
-export async function single(ctx) {
+export async function byId(ctx) {
     const {id, withUser} = ctx.query;
     const query = Course.findById(id);
 
@@ -75,7 +76,9 @@ export async function single(ctx) {
     }
 
     let data = await query.exec();
-    data = await Course.setUserIsMember([data], ctx.authService.getUserId());
+    const authUserId = ctx.authService.getUserId();
+    data = await Course.setUserIsMember([data], authUserId);
+    data = await Course.setUserIsOwner(data, authUserId);
     data = data[0];
 
     return response.json(ctx, {
@@ -83,6 +86,18 @@ export async function single(ctx) {
     });
 }
 
+/**
+ * @api {post} /course/join join course
+ * @apiGroup Course
+ * @apiParam {String} courseId course id to join
+ * @apiParam {String} [password] if course has password
+ * @apiUse AuthHeader
+ * @apiUse SuccessResponse
+ * @apiSuccess {Object} id course id
+ * @apiSuccess {Object} data course object. check `Model > Course`
+ * @apiSuccessExample example
+ * { "success":true, "status": 200, "id": String, "data": Object }
+ * */
 export async function join(ctx) {
     const {courseId, password} = ctx.request.body;
     const userId = ctx.authService.getUserId();
@@ -113,6 +128,7 @@ export async function join(ctx) {
     await Course.populate(course, 'user');
 
     course.userIsMember = true;
+    course.userIsOwner = false;
 
     return response.json(ctx, {
         id: record.id,
@@ -120,6 +136,16 @@ export async function join(ctx) {
     });
 }
 
+/**
+ * @api {post} /course/leave leave course
+ * @apiGroup Course
+ * @apiParam {String} courseId course id to leave
+ * @apiUse AuthHeader
+ * @apiUse SuccessResponse
+ * @apiSuccess {Object} id course id
+ * @apiSuccessExample example
+ * { "success":true, "status": 200, "id": String }
+ * */
 export async function leave(ctx) {
     const {courseId} = ctx.request.body;
     const userId = ctx.authService.getUserId();
@@ -147,6 +173,16 @@ export async function leave(ctx) {
     });
 }
 
+/**
+ * @api {get} /course/joined-courses joined courses
+ * @apiDescription list of joined courses
+ * @apiGroup Course
+ * @apiUse AuthHeader
+ * @apiUse Datatable
+ * @apiSuccess {Object[]} data array of records. check `Model > Course`
+ * @apiSuccessExample example
+ * { "success":true, "status": 200, "data": [Object], "total": Number }
+ * */
 export async function joinedCourses(ctx) {
     const userId = ctx.authService.getUserId();
 
@@ -159,14 +195,23 @@ export async function joinedCourses(ctx) {
 
     joinedCourses.data = joinedCourses.data.map(item => {
         item.userIsMember = true;
+        item.userIsOwner = false;
         return item;
     });
 
-    return response.json(ctx, {
-        data: joinedCourses,
-    });
+    return response.json(ctx, joinedCourses);
 }
 
+/**
+ * @api {get} /course/owned-courses owned courses
+ * @apiDescription list of owned courses
+ * @apiGroup Course
+ * @apiUse AuthHeader
+ * @apiUse Datatable
+ * @apiSuccess {Object[]} data array of records. check `Model > Course`
+ * @apiSuccessExample example
+ * { "success":true, "status": 200, "data": [Object], "total": Number }
+ * */
 export async function ownedCourses(ctx) {
     const userId = ctx.authService.getUserId();
 
@@ -175,13 +220,25 @@ export async function ownedCourses(ctx) {
     });
 
     ownedCourses.data = ownedCourses.data.map(item => {
-        item.userIsMember = true;
+        item.userIsMember = false;
+        item.userIsOwner = true;
         return item;
     });
 
     return response.json(ctx, ownedCourses);
 }
 
+/**
+ * @api {get} /course/by-user-id by user id
+ * @apiDescription list of courses created by given user id
+ * @apiParam {String} userId user id to find its courses
+ * @apiGroup Course
+ * @apiUse AuthHeader
+ * @apiUse Datatable
+ * @apiSuccess {Object[]} data array of records. check `Model > Course`
+ * @apiSuccessExample example
+ * { "success":true, "status": 200, "data": [Object], "total": Number }
+ * */
 export async function byUserId(ctx) {
     const {userId} = ctx.query;
 
@@ -190,12 +247,21 @@ export async function byUserId(ctx) {
     });
     const authUserId = ctx.authService.getUserId();
     courses.data = await Course.setUserIsMember(courses.data, authUserId);
+    courses.data = await Course.setUserIsOwner(courses.data, authUserId);
 
-    return response.json(ctx, {
-        data: courses,
-    });
+    return response.json(ctx, courses);
 }
 
+/**
+ * @api {get} /course/similar similar
+ * @apiDescription search the courses for given input
+ * @apiParam {String} input input for search
+ * @apiGroup Course
+ * @apiUse AuthHeader
+ * @apiSuccess {Object[]} data array of records. check `Model > Course`
+ * @apiSuccessExample example
+ * { "success":true, "status": 200, "data": [Object] }
+ * */
 export async function similar(ctx) {
     const {input} = ctx.query;
 
@@ -204,7 +270,9 @@ export async function similar(ctx) {
             title: new RegExp(regexUtil.startOfWordInAnyOrder(input), "i"),
         }).populate('user');
 
-        data = await Course.setUserIsMember(data, ctx.authService.getUserId());
+        const authUserId = ctx.authService.getUserId()
+        data = await Course.setUserIsMember(data, authUserId);
+        data = await Course.setUserIsOwner(data, authUserId);
 
         return response.json(ctx, {
             data: data.map(x => pick(x, [

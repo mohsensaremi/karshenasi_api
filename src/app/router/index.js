@@ -23,12 +23,12 @@ router.post('/course/join', userTypeMiddleware(['student']), CourseController.jo
 router.post('/course/leave', userTypeMiddleware(['student']), CourseController.leave);
 router.get('/course/joined-courses', userTypeMiddleware(['student']), CourseController.joinedCourses);
 router.get('/course/owned-courses', userTypeMiddleware(['instructor']), CourseController.ownedCourses);
-router.get('/course/single', CourseController.single);
+router.get('/course/by-id', CourseController.byId);
 router.get('/course/similar', CourseController.similar);
 router.get('/course/by-user-id', CourseController.byUserId);
 
 router.post('/post/submit', userTypeMiddleware(['instructor']), PostController.submit);
-router.get('/post/posts-by-course-id', PostController.postsByCourseId);
+router.get('/post/by-course-id', PostController.postsByCourseId);
 
 router.get('/calendar/get', CalendarController.getCalendar);
 

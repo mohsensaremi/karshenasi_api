@@ -35,6 +35,7 @@ CourseSchema.virtual('hasPassword').get(function () {
 });
 
 CourseSchema.virtual('userIsMember');
+CourseSchema.virtual('userIsOwner');
 
 CourseSchema.statics.setUserIsMember = async function (items, userId) {
 
@@ -48,6 +49,13 @@ CourseSchema.statics.setUserIsMember = async function (items, userId) {
 
     return items.map(item => {
         item.userIsMember = !!joinedCoursesById[item.id];
+        return item;
+    });
+};
+
+CourseSchema.statics.setUserIsOwner = async function (items, userId) {
+    return items.map(item => {
+        item.userIsOwner = item.userId.toString() === userId;
         return item;
     });
 };
