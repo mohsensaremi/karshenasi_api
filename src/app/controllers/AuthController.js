@@ -1,5 +1,15 @@
 import response from 'app/response';
 
+/**
+ * @api {post} /login login
+ * @apiGroup Auth
+ * @apiParam {String} email
+ * @apiParam {String} password
+ * @apiUse SuccessResponse
+ * @apiSuccess {String} data.token store it for auth required requests
+ * @apiSuccessExample example
+ * { "success":true, "status": 200, "data": { "token": String } }
+ */
 export async function login(ctx) {
     const {email, password} = ctx.request.body;
 
@@ -19,6 +29,20 @@ export async function login(ctx) {
     }
 }
 
+/**
+ * @api {post} /register register
+ * @apiGroup Auth
+ * @apiParam {String} email
+ * @apiParam {String} password
+ * @apiParam {String} passwordConfirmation
+ * @apiParam {String} firstName
+ * @apiParam {String} lastName
+ * @apiParam {String="instructor","student"} type user type
+ * @apiUse SuccessResponse
+ * @apiSuccess {String} data.token store it for auth required requests
+ * @apiSuccessExample example
+ * { "success":true, "status": 200, "data": { "token": String } }
+ */
 export async function register(ctx) {
     const {email, password, passwordConfirmation, ...other} = ctx.request.body;
 
@@ -45,6 +69,16 @@ export async function register(ctx) {
     }
 }
 
+
+/**
+ * @api {get} /me me
+ * @apiGroup Auth
+ * @apiUse AuthHeader
+ * @apiUse SuccessResponse
+ * @apiSuccess {Object} data.user current authenticated user data
+ * @apiSuccessExample example
+ * { "success":true, "status": 200, "data": { "user": Object } }
+ */
 export async function me(ctx) {
     try {
         const user = await ctx.authService.getUser();
@@ -56,6 +90,15 @@ export async function me(ctx) {
     }
 }
 
+/**
+ * @api {post} /refresh refresh an expired token
+ * @apiGroup Auth
+ * @apiUse AuthHeader
+ * @apiUse SuccessResponse
+ * @apiSuccess {String} data.token store it for auth required requests
+ * @apiSuccessExample example
+ * { "success":true, "status": 200, "data": { "token": String } }
+ * */
 export async function refresh(ctx) {
     try {
         await ctx.authService.refreshExpiredToken();
@@ -67,6 +110,14 @@ export async function refresh(ctx) {
     }
 }
 
+/**
+ * @api {post} /logout logout
+ * @apiGroup Auth
+ * @apiUse AuthHeader
+ * @apiUse SuccessResponse
+ * @apiSuccessExample example
+ * { "success":true, "status": 200 }
+ */
 export async function logout(ctx) {
     try {
         await ctx.authService.logout();
@@ -74,12 +125,4 @@ export async function logout(ctx) {
     } catch (e) {
         return response.validatorError(ctx, [{logout: e.message}]);
     }
-}
-
-export async function loginById(ctx) {
-    const {userId} = ctx.request.body;
-    const token = await ctx.authService.loginById(userId);
-    return response.json(ctx, {
-        token,
-    });
 }
