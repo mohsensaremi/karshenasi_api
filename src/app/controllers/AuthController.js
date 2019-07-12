@@ -75,9 +75,9 @@ export async function register(ctx) {
  * @apiGroup Auth
  * @apiUse AuthHeader
  * @apiUse SuccessResponse
- * @apiSuccess {Object} data.user current authenticated user data
+ * @apiSuccess {Object} data.me current authenticated user data
  * @apiSuccessExample example
- * { "success":true, "status": 200, "data": { "user": Object } }
+ * { "success":true, "status": 200, "data": { "me": Object } }
  */
 export async function me(ctx) {
     try {

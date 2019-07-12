@@ -5,6 +5,20 @@ import bcrypt from 'bcrypt';
 import * as regexUtil from 'utils/regex';
 import pick from 'lodash/pick';
 
+/**
+ * @api {post} /course/submit submit a course. if
+ * @apiGroup Course
+ * @apiParam {String} title course title
+ * @apiParam {String} [id] if provided, course will be edited otherwise create a new course
+ * @apiParam {String} [password] if provided, user will be asked to enter this password for join to this course
+ * @apiUse AuthHeader
+ * @apiUse SuccessResponse
+ * @apiSuccess {String} data.id submitted course id
+ * @apiSuccess {Boolean} data.edit for check if course created or edited
+ * @apiSuccess {Object} data.data submitted course data
+ * @apiSuccessExample example
+ * { "success":true, "status": 200, "data": { "id": String, "edit": Boolean, "data": Object } }
+ * */
 export async function submit(ctx) {
     const {title, password, id} = ctx.request.body;
 
@@ -39,6 +53,19 @@ export async function submit(ctx) {
     });
 }
 
+/**
+ * @api {get} /course/single get course data with its id
+ * @apiGroup Course
+ * @apiParam {String} id course id
+ * @apiParam {String} [withUser] if provided, the course owner data will return
+ * @apiUse AuthHeader
+ * @apiUse SuccessResponse
+ * @apiSuccess {Object} data.data course object
+ * @apiSuccess {Boolean} data.edit for check if course created or edited
+ * @apiSuccess {Object} data.data submitted course data
+ * @apiSuccessExample example
+ * { "success":true, "status": 200, "data": { "id": String, "edit": Boolean, "data": Object } }
+ * */
 export async function single(ctx) {
     const {id, withUser} = ctx.query;
     const query = Course.findById(id);
@@ -51,7 +78,9 @@ export async function single(ctx) {
     data = await Course.setUserIsMember([data], ctx.authService.getUserId());
     data = data[0];
 
-    return response.json(ctx, data);
+    return response.json(ctx, {
+        data,
+    });
 }
 
 export async function join(ctx) {
@@ -133,7 +162,9 @@ export async function joinedCourses(ctx) {
         return item;
     });
 
-    return response.json(ctx, joinedCourses);
+    return response.json(ctx, {
+        data: joinedCourses,
+    });
 }
 
 export async function ownedCourses(ctx) {
@@ -160,7 +191,9 @@ export async function byUserId(ctx) {
     const authUserId = ctx.authService.getUserId();
     courses.data = await Course.setUserIsMember(courses.data, authUserId);
 
-    return response.json(ctx, courses);
+    return response.json(ctx, {
+        data: courses,
+    });
 }
 
 export async function similar(ctx) {
@@ -173,13 +206,15 @@ export async function similar(ctx) {
 
         data = await Course.setUserIsMember(data, ctx.authService.getUserId());
 
-        return response.json(ctx,
-            data.map(x => pick(x, [
+        return response.json(ctx, {
+            data: data.map(x => pick(x, [
                 '_id', 'id', 'title', 'hasPassword',
                 'user._id', 'user.id', 'user.firstName', 'user.lastName'
-            ]))
-        );
+            ])),
+        });
     }
 
-    return response.json(ctx, []);
+    return response.json(ctx, {
+        data: [],
+    });
 }

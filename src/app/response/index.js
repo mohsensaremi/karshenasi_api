@@ -1,8 +1,8 @@
-function json(ctx, data, status = 200) {
+function json(ctx, body, status = 200) {
     ctx.body = {
+        ...body,
         success: status === 200,
         status,
-        data,
     };
 }
 

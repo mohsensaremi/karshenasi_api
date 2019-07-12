@@ -10,10 +10,12 @@ export async function byId(ctx) {
         type: UserType.instructor,
     });
 
-    return response.json(ctx, pick(user, [
-        'firstName',
-        'lastName',
-        'type',
-        'email',
-    ]));
+    return response.json(ctx, {
+        data: pick(user, [
+            'firstName',
+            'lastName',
+            'type',
+            'email',
+        ])
+    });
 }
