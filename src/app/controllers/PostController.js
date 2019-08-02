@@ -49,10 +49,13 @@ export async function submit(ctx) {
         post.courseId = courseId;
     }
 
+    if ([PostType.project, PostType.assignment].includes(PostType[type])) {
+        post.dueDate = dueDate;
+    }
+
     post.set({
         title,
         content,
-        dueDate,
         type: PostType[type],
     });
 
