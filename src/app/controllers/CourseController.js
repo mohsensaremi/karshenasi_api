@@ -29,14 +29,18 @@ export async function submit(ctx) {
     }
     let edit = false;
     let course = new Course();
+    const userId = ctx.authService.getUserId();
     if (id) {
-        course = await Course.findById(id);
+        course = await Course.findOne({
+            _id: id,
+            userId,
+        });
         if (!course) {
             return response.validatorError(ctx, [{me: `course with id:${id} not found`}]);
         }
         edit = true;
     } else {
-        course.userId = ctx.authService.getUserId();
+        course.userId = userId;
     }
 
     course.set({title});
@@ -285,4 +289,17 @@ export async function similar(ctx) {
     return response.json(ctx, {
         data: [],
     });
+}
+
+export async function members(ctx) {
+    const {courseId} = ctx.query;
+    const user = ctx.authService.getMinimalUser();
+    const course = await user.findCourseById(courseId);
+    course.checkUserIsOwner(user._id);
+
+    const data = await course.getMembers();
+    return response.json(ctx, {
+        data,
+    });
+
 }

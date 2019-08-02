@@ -29,6 +29,7 @@ router.all('/course/owned-courses', userTypeMiddleware(['instructor']), CourseCo
 router.all('/course/by-id', CourseController.byId);
 router.all('/course/similar', CourseController.similar);
 router.all('/course/by-user-id', CourseController.byUserId);
+router.all('/course/members', userTypeMiddleware(['instructor']), CourseController.members);
 
 router.post('/post/submit', userTypeMiddleware(['instructor']), PostController.submit);
 router.all('/post/by-course-id', PostController.postsByCourseId);

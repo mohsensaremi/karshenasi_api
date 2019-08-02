@@ -4,6 +4,7 @@ import koaBody from 'koa-body';
 import cors from '@koa/cors';
 import router from 'app/router';
 import contextMiddleware from 'app/middlewares/context';
+import exceptionMiddleware from 'app/middlewares/exception';
 import render from 'koa-ejs';
 import path from 'path';
 import serve from 'koa-static';
@@ -21,6 +22,7 @@ app.use(cors())
         multipart: true,
     }))
     .use(contextMiddleware)
+    .use(exceptionMiddleware)
     .use(router.routes())
     .use(router.allowedMethods());
 

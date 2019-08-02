@@ -1,6 +1,8 @@
 import {Schema} from 'app/mongoose';
 import {conn} from 'config/database';
 import UserToken from 'app/models/UserToken';
+import Course from "../Course";
+import ValidatorException from 'app/exeptions/ValidatorException';
 
 export const UserType = {
     instructor: "instructor",
@@ -47,6 +49,19 @@ UserSchema.methods.isInstructor = function () {
 
 UserSchema.methods.isStudent = function () {
     return this.type === UserType.student;
+};
+
+UserSchema.methods.findCourseById = async function (courseId, throwErr = true) {
+
+    const course = await Course.findOne({
+        _id: courseId,
+        userId: this._id,
+    });
+    if (throwErr && !course) {
+        throw new ValidatorException(`course with id:${courseId} not found`);
+    }
+
+    return course;
 };
 
 const User = conn.model('User', UserSchema);

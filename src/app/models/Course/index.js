@@ -2,6 +2,9 @@ import {Schema} from 'app/mongoose';
 import {conn} from 'config/database';
 import CourseMember from '../CourseMember';
 import keyBy from 'lodash/keyBy';
+import ValidatorException from "app/exeptions/ValidatorException";
+import User from "../User";
+import toString from 'lodash/toString';
 
 export const CourseSchema = new Schema({
     title: {type: String, required: true},
@@ -60,8 +63,12 @@ CourseSchema.statics.setUserIsOwner = async function (items, userId) {
     });
 };
 
-CourseSchema.methods.checkUserIsOwner = async function (userId) {
-    return userId == this.userId;
+CourseSchema.methods.checkUserIsOwner = function (userId, throwErr = true) {
+    const result = toString(userId) === toString(this.userId);
+    if (throwErr && !result) {
+        throw new ValidatorException(`user: ${userId} is not course owner`);
+    }
+    return result;
 };
 
 CourseSchema.methods.checkUserIsMember = async function (userId) {
@@ -71,6 +78,17 @@ CourseSchema.methods.checkUserIsMember = async function (userId) {
     }).countDocuments();
 
     return count !== 0;
+};
+
+CourseSchema.methods.getMembers = async function () {
+    const coursesPivot = await CourseMember.find({courseId: this._id});
+    const userIds = coursesPivot.map(({userId}) => userId);
+    return await User.find({
+        _id: {$in: userIds},
+    }).sort({
+        lastName: 1,
+        firstName: 1,
+    });
 };
 
 const Course = conn.model('Course', CourseSchema);
