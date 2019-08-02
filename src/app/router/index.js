@@ -3,6 +3,7 @@ import * as CourseController from 'app/controllers/CourseController';
 import * as PostController from 'app/controllers/PostController';
 import * as CalendarController from 'app/controllers/CalendarController';
 import * as UserController from 'app/controllers/UserController';
+import * as UploadController from 'app/controllers/UploadController';
 import Router from "koa-router";
 import authMiddleware from 'app/middlewares/auth';
 import userTypeMiddleware from 'app/middlewares/userType';
@@ -17,6 +18,8 @@ router.use(authMiddleware);
 
 router.all('/me', AuthController.me);
 router.post('/logout', AuthController.logout);
+
+router.post('/upload/tmp', UploadController.tmp);
 
 router.post('/course/submit', userTypeMiddleware(['instructor']), CourseController.submit);
 router.post('/course/join', userTypeMiddleware(['student']), CourseController.join);
@@ -33,5 +36,6 @@ router.all('/post/by-course-id', PostController.postsByCourseId);
 router.all('/calendar/get', CalendarController.getCalendar);
 
 router.all('/user/by-id', UserController.byId);
+
 
 export default router;

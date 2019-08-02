@@ -15,6 +15,8 @@ export const PostSchema = new Schema({
     type: {type: String, required: true},
     title: {type: String, required: true},
     content: {type: String},
+    dueDate: {type: Date, default: null},
+    files: {type: [String]},
 });
 
 const Post = conn.model('Post', PostSchema);

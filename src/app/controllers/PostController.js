@@ -1,6 +1,7 @@
 import response from 'app/response';
 import Post, {PostType} from 'app/models/Post';
 import Course from "app/models/Course";
+import Uploader from "../uploader";
 
 /**
  * @api {post} /post/submit submit
@@ -20,7 +21,7 @@ import Course from "app/models/Course";
  * { "success":true, "status": 200, "id": String, "edit": Boolean, "data": Object }
  * */
 export async function submit(ctx) {
-    const {title, content, courseId, id, type} = ctx.request.body;
+    const {title, content, courseId, id, type, dueDate, files} = ctx.request.body;
 
     ctx.checkBody('title').notEmpty("وارد کردن عنوان اجباری است");
     if (ctx.errors) {
@@ -50,10 +51,19 @@ export async function submit(ctx) {
     post.set({
         title,
         content,
+        dueDate,
         type: PostType[type],
     });
 
     await post.save();
+
+    if (Array.isArray(files)) {
+        const uploader = new Uploader(files, `${post.courseId}/${post._id}`);
+        uploader.upload();
+        uploader.delete();
+        post.files = uploader.getFiles();
+        await post.save();
+    }
 
     return response.json(ctx, {
         id: post.id,
