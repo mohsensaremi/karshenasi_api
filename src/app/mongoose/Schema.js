@@ -8,9 +8,11 @@ class Schema extends mongoose.Schema {
             timestamps: {createdAt: 'created_at', updatedAt: 'updated_at'},
             toObject: {
                 virtuals: true,
+                getters: true,
             },
             toJSON: {
                 virtuals: true,
+                getters: true,
             },
             ...options,
         };

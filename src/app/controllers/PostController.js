@@ -58,7 +58,7 @@ export async function submit(ctx) {
     await post.save();
 
     if (Array.isArray(files)) {
-        const uploader = new Uploader(files, `${post.courseId}/${post._id}`);
+        const uploader = new Uploader(files, `course/${post.courseId}/post/${post._id}`);
         uploader.upload();
         uploader.delete();
         post.files = uploader.getFiles();

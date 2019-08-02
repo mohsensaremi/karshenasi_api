@@ -19,6 +19,16 @@ export const PostSchema = new Schema({
     files: {type: [String]},
 });
 
+PostSchema.path('files').get(function (v) {
+    if (Array.isArray(v)) {
+        return v.map(x => ({
+            name: x,
+            url: `${process.env.APP_URL}/storage/course/${this.courseId}/post/${this._id}/${x}`,
+        }));
+    }
+    return [];
+});
+
 const Post = conn.model('Post', PostSchema);
 
 export default Post;

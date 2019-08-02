@@ -7,11 +7,12 @@ import contextMiddleware from 'app/middlewares/context';
 import render from 'koa-ejs';
 import path from 'path';
 import serve from 'koa-static';
-
+import mount from 'koa-mount';
 
 const app = new Koa();
 
 app.use(serve(path.join(__dirname, '../apidoc')));
+app.use(mount('/storage', serve(path.join(__dirname, '../storage/public'))));
 
 require('koa-validate')(app);
 
