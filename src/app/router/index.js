@@ -15,23 +15,23 @@ router.post('/refresh', AuthController.refresh);
 
 router.use(authMiddleware);
 
-router.get('/me', AuthController.me);
+router.all('/me', AuthController.me);
 router.post('/logout', AuthController.logout);
 
 router.post('/course/submit', userTypeMiddleware(['instructor']), CourseController.submit);
 router.post('/course/join', userTypeMiddleware(['student']), CourseController.join);
 router.post('/course/leave', userTypeMiddleware(['student']), CourseController.leave);
-router.get('/course/joined-courses', userTypeMiddleware(['student']), CourseController.joinedCourses);
-router.get('/course/owned-courses', userTypeMiddleware(['instructor']), CourseController.ownedCourses);
-router.get('/course/by-id', CourseController.byId);
-router.get('/course/similar', CourseController.similar);
-router.get('/course/by-user-id', CourseController.byUserId);
+router.all('/course/joined-courses', userTypeMiddleware(['student']), CourseController.joinedCourses);
+router.all('/course/owned-courses', userTypeMiddleware(['instructor']), CourseController.ownedCourses);
+router.all('/course/by-id', CourseController.byId);
+router.all('/course/similar', CourseController.similar);
+router.all('/course/by-user-id', CourseController.byUserId);
 
 router.post('/post/submit', userTypeMiddleware(['instructor']), PostController.submit);
-router.get('/post/by-course-id', PostController.postsByCourseId);
+router.all('/post/by-course-id', PostController.postsByCourseId);
 
-router.get('/calendar/get', CalendarController.getCalendar);
+router.all('/calendar/get', CalendarController.getCalendar);
 
-router.get('/user/by-id', UserController.byId);
+router.all('/user/by-id', UserController.byId);
 
 export default router;
