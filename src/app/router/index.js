@@ -33,6 +33,8 @@ router.all('/course/members', userTypeMiddleware(['instructor']), CourseControll
 
 router.post('/post/submit', userTypeMiddleware(['instructor']), PostController.submit);
 router.all('/post/by-course-id', PostController.postsByCourseId);
+router.all('/post/attendances', PostController.attendances);
+router.all('/post/grades', PostController.grades);
 
 router.all('/calendar/get', CalendarController.getCalendar);
 

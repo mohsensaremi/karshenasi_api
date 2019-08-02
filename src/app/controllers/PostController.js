@@ -2,6 +2,7 @@ import response from 'app/response';
 import Post, {PostType} from 'app/models/Post';
 import Course from "app/models/Course";
 import Uploader from "../uploader";
+import ValidatorException from "app/exeptions/ValidatorException";
 
 /**
  * @api {post} /post/submit submit
@@ -21,7 +22,7 @@ import Uploader from "../uploader";
  * { "success":true, "status": 200, "id": String, "edit": Boolean, "data": Object }
  * */
 export async function submit(ctx) {
-    const {title, content, courseId, id, type, dueDate, files} = ctx.request.body;
+    const {title, content, courseId, id, type, dueDate, files, attendance, grade} = ctx.request.body;
 
     ctx.checkBody('title').notEmpty("وارد کردن عنوان اجباری است");
     if (ctx.errors) {
@@ -65,6 +66,14 @@ export async function submit(ctx) {
         await post.save();
     }
 
+    if (type === PostType.attendance && attendance) {
+        await post.submitAttendance(attendance);
+    }
+
+    if (type === PostType.grade && grade) {
+        await post.submitGrade(grade);
+    }
+
     return response.json(ctx, {
         id: post.id,
         edit,
@@ -105,4 +114,58 @@ export async function postsByCourseId(ctx) {
     const dt = await Post.dataTable(ctx.query, find);
 
     return response.json(ctx, dt);
+}
+
+export async function attendances(ctx) {
+    const {postId} = ctx.query;
+    const post = await Post.findById(postId);
+    if (!post) {
+        throw new ValidatorException(`post with id:${postId} not found`);
+    }
+    const userId = ctx.authService.getUserId();
+    const course = await post.getCourse();
+    const userIsOwner = course.checkUserIsOwner(userId);
+    let userIsMember = false;
+    if (!userIsOwner) {
+        userIsMember = await course.checkUserIsMember(userId);
+        if (!userIsMember) {
+            throw new ValidatorException(`user is not member`);
+        }
+    }
+
+    let data = {};
+    if (userIsOwner) {
+        data = await post.getAttendances();
+    } else if (userIsMember) {
+        data = await post.getAttendances(userId);
+    }
+
+    return response.json(ctx, {data});
+}
+
+export async function grades(ctx) {
+    const {postId} = ctx.query;
+    const post = await Post.findById(postId);
+    if (!post) {
+        throw new ValidatorException(`post with id:${postId} not found`);
+    }
+    const userId = ctx.authService.getUserId();
+    const course = await post.getCourse();
+    const userIsOwner = course.checkUserIsOwner(userId);
+    let userIsMember = false;
+    if (!userIsOwner) {
+        userIsMember = await course.checkUserIsMember(userId);
+        if (!userIsMember) {
+            throw new ValidatorException(`user is not member`);
+        }
+    }
+
+    let data = {};
+    if (userIsOwner) {
+        data = await post.getGrades();
+    } else if (userIsMember) {
+        data = await post.getGrades(userId);
+    }
+
+    return response.json(ctx, {data});
 }

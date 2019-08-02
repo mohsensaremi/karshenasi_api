@@ -5,6 +5,7 @@ import keyBy from 'lodash/keyBy';
 import ValidatorException from "app/exeptions/ValidatorException";
 import User from "../User";
 import toString from 'lodash/toString';
+import Post from "../Post";
 
 export const CourseSchema = new Schema({
     title: {type: String, required: true},
@@ -89,6 +90,19 @@ CourseSchema.methods.getMembers = async function () {
         lastName: 1,
         firstName: 1,
     });
+};
+
+CourseSchema.methods.findPostById = async function (postId, throwErr = true) {
+
+    const post = await Post.findOne({
+        _id: postId,
+        courseId: this._id,
+    });
+    if (throwErr && !post) {
+        throw new ValidatorException(`post with id:${courseId} not found`);
+    }
+
+    return post;
 };
 
 const Course = conn.model('Course', CourseSchema);
