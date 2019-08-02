@@ -57,4 +57,21 @@
  * @apiParam {String} userId creator user id
  * @apiParam {String} courseId course id that post is created in
  * @apiParam {String="alert","assignment","attendance","project","grade"} type post type
+ * @apiParam {Date} dueDate ISO date string
+ * @apiParam {File[]} files array if uploaded files. check `Model > File`
+ * */
+
+/**
+ * @api {model} /model/uploadFile UploadFile
+ * @apiGroup Model
+ * @apiParam {String} name file name
+ * @apiParam {Boolean=false} fresh if true, file will be moved from tmp to real place.
+ * @apiParam {Boolean=false} deleted if true, file will be removed.
+ * */
+
+/**
+ * @api {model} /model/file File
+ * @apiGroup Model
+ * @apiParam {String} name file name
+ * @apiParam {String} url url to download file
  * */

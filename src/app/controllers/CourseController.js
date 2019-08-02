@@ -291,6 +291,17 @@ export async function similar(ctx) {
     });
 }
 
+/**
+ * @api {get} /course/members course members
+ * @apiDescription get list of members
+ * @apiParam {String} courseId course id
+ * @apiGroup Course
+ * @apiUse AuthHeader
+ * @apiUse SuccessResponse
+ * @apiSuccess {User[]} data array of members. check `Model > User`
+ * @apiSuccessExample example
+ * { "success":true, "status": 200, "data": [User] }
+ * */
 export async function members(ctx) {
     const {courseId} = ctx.query;
     const user = ctx.authService.getMinimalUser();

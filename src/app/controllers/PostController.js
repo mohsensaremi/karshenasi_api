@@ -13,6 +13,10 @@ import ValidatorException from "app/exeptions/ValidatorException";
  * @apiParam {String} courseId course id for post
  * @apiParam {String="alert","assignment","attendance","project","grade"} type post type
  * @apiParam {String} [id] if provided, course will be edited otherwise create a new course
+ * @apiParam {Date} dueDate ISO date string. if type is `project` or `assignment`, should be provided. example: 2019-08-01T18:19:00.000Z
+ * @apiParam {UploadFile[]} files array of files. check `Model > UploadFile`
+ * @apiParam {Object} grade if type is `grade`, {[key]=>[value]} object of grades
+ * @apiParam {Object} attendance if type is `attendance`, {[key]=>[value]} object of attendances
  * @apiUse AuthHeader
  * @apiUse SuccessResponse
  * @apiSuccess {String} id submitted post id
@@ -50,6 +54,10 @@ export async function submit(ctx) {
     }
 
     if ([PostType.project, PostType.assignment].includes(PostType[type])) {
+        ctx.checkBody('dueDate').notEmpty("وارد کردن موعد تویل اجباری است");
+        if (ctx.errors) {
+            return response.validatorError(ctx, ctx.errors);
+        }
         post.dueDate = dueDate;
     }
 
@@ -119,6 +127,16 @@ export async function postsByCourseId(ctx) {
     return response.json(ctx, dt);
 }
 
+/**
+ * @api {get} /post/attendances post attendances
+ * @apiParam {String} postId post id
+ * @apiGroup Post
+ * @apiUse AuthHeader
+ * @apiUse SuccessResponse
+ * @apiSuccess {Object} data {[key]=>[value]} object of post attendances
+ * @apiSuccessExample example
+ * { "success":true, "status": 200, "data": Object }
+ * */
 export async function attendances(ctx) {
     const {postId} = ctx.query;
     const post = await Post.findById(postId);
@@ -146,6 +164,16 @@ export async function attendances(ctx) {
     return response.json(ctx, {data});
 }
 
+/**
+ * @api {get} /post/grades post grades
+ * @apiParam {String} postId post id
+ * @apiGroup Post
+ * @apiUse AuthHeader
+ * @apiUse SuccessResponse
+ * @apiSuccess {Object} data {[key]=>[value]} object of post grades
+ * @apiSuccessExample example
+ * { "success":true, "status": 200, "data": Object }
+ * */
 export async function grades(ctx) {
     const {postId} = ctx.query;
     const post = await Post.findById(postId);
