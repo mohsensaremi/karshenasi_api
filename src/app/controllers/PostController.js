@@ -110,7 +110,7 @@ export async function postsByCourseId(ctx) {
     if (!course) {
         return response.validatorError(ctx, [{me: `course with id:${courseId} not found`}]);
     }
-    const userIsOwner = course.checkUserIsOwner(ctx.authService.getUserId());
+    const userIsOwner = course.checkUserIsOwner(ctx.authService.getUserId(), false);
     if (!userIsOwner) {
         const userIsMember = await course.checkUserIsMember(ctx.authService.getUserId());
         if (!userIsMember) {
@@ -145,7 +145,7 @@ export async function attendances(ctx) {
     }
     const userId = ctx.authService.getUserId();
     const course = await post.getCourse();
-    const userIsOwner = course.checkUserIsOwner(userId);
+    const userIsOwner = course.checkUserIsOwner(userId, false);
     let userIsMember = false;
     if (!userIsOwner) {
         userIsMember = await course.checkUserIsMember(userId);
@@ -182,7 +182,7 @@ export async function grades(ctx) {
     }
     const userId = ctx.authService.getUserId();
     const course = await post.getCourse();
-    const userIsOwner = course.checkUserIsOwner(userId);
+    const userIsOwner = course.checkUserIsOwner(userId, false);
     let userIsMember = false;
     if (!userIsOwner) {
         userIsMember = await course.checkUserIsMember(userId);
