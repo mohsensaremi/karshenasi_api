@@ -105,7 +105,7 @@ export async function submit(ctx) {
  * { "success":true, "status": 200, "data": [Object], "total": Number }
  * */
 export async function postsByCourseId(ctx) {
-    const {courseId, type} = ctx.query;
+    const {courseId, type} = ctx.requestData();
     const course = await Course.findById(courseId);
     if (!course) {
         return response.validatorError(ctx, [{me: `course with id:${courseId} not found`}]);
@@ -122,7 +122,7 @@ export async function postsByCourseId(ctx) {
     if (PostType[type]) {
         find.type = PostType[type];
     }
-    const dt = await Post.dataTable(ctx.query, find);
+    const dt = await Post.dataTable(ctx.requestData(), find);
 
     return response.json(ctx, dt);
 }
@@ -138,7 +138,7 @@ export async function postsByCourseId(ctx) {
  * { "success":true, "status": 200, "data": Object }
  * */
 export async function attendances(ctx) {
-    const {postId} = ctx.query;
+    const {postId} = ctx.requestData();
     const post = await Post.findById(postId);
     if (!post) {
         throw new ValidatorException(`post with id:${postId} not found`);
@@ -175,7 +175,7 @@ export async function attendances(ctx) {
  * { "success":true, "status": 200, "data": Object }
  * */
 export async function grades(ctx) {
-    const {postId} = ctx.query;
+    const {postId} = ctx.requestData();
     const post = await Post.findById(postId);
     if (!post) {
         throw new ValidatorException(`post with id:${postId} not found`);

@@ -14,7 +14,7 @@ import pick from 'lodash/pick';
  * { "success":true, "status": 200, "id": String, "edit": Boolean, "data": Object }
  * */
 export async function byId(ctx) {
-    const {userId} = ctx.query;
+    const {userId} = ctx.requestData();
 
     const user = await User.findOne({
         _id: userId,

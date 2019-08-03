@@ -72,7 +72,7 @@ export async function submit(ctx) {
  * { "success":true, "status": 200, "id": String, "edit": Boolean, "data": Object }
  * */
 export async function byId(ctx) {
-    const {id, withUser} = ctx.query;
+    const {id, withUser} = ctx.requestData();
     const query = Course.findById(id);
 
     if (withUser) {
@@ -192,7 +192,7 @@ export async function joinedCourses(ctx) {
 
     const joinedCoursesPivot = await CourseMember.find({userId});
     const joinedCoursesId = joinedCoursesPivot.map(({courseId}) => courseId);
-    const joinedCourses = await Course.dataTable(ctx.query, {
+    const joinedCourses = await Course.dataTable(ctx.requestData(), {
         _id: {$in: joinedCoursesId},
     });
     await Course.populate(joinedCourses.data, 'user');
@@ -219,7 +219,7 @@ export async function joinedCourses(ctx) {
 export async function ownedCourses(ctx) {
     const userId = ctx.authService.getUserId();
 
-    const ownedCourses = await Course.dataTable(ctx.query, {
+    const ownedCourses = await Course.dataTable(ctx.requestData(), {
         userId: userId,
     });
 
@@ -244,9 +244,9 @@ export async function ownedCourses(ctx) {
  * { "success":true, "status": 200, "data": [Object], "total": Number }
  * */
 export async function byUserId(ctx) {
-    const {userId} = ctx.query;
+    const {userId} = ctx.requestData();
 
-    const courses = await Course.dataTable(ctx.query, {
+    const courses = await Course.dataTable(ctx.requestData(), {
         userId: userId,
     });
     const authUserId = ctx.authService.getUserId();
@@ -267,7 +267,7 @@ export async function byUserId(ctx) {
  * { "success":true, "status": 200, "data": [Object] }
  * */
 export async function similar(ctx) {
-    const {input} = ctx.query;
+    const {input} = ctx.requestData();
 
     if (input) {
         let data = await Course.find({
@@ -303,7 +303,7 @@ export async function similar(ctx) {
  * { "success":true, "status": 200, "data": [User] }
  * */
 export async function members(ctx) {
-    const {courseId} = ctx.query;
+    const {courseId} = ctx.requestData();
     const user = ctx.authService.getMinimalUser();
     const course = await user.findCourseById(courseId);
     course.checkUserIsOwner(user._id);

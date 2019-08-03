@@ -3,7 +3,7 @@ import moment from 'moment-jalaali';
 import chunk from 'lodash/chunk';
 
 export async function getCalendar(ctx) {
-    const {month} = ctx.query;
+    const {month} = ctx.requestData();
 
     let startOfMonth = moment().startOf('jMonth');
     if (month) {
