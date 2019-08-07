@@ -200,3 +200,26 @@ export async function grades(ctx) {
 
     return response.json(ctx, {data});
 }
+
+/**
+ * @api {post} /post/remove remove
+ * @apiDescription remove post by id
+ * @apiParam {String} postId post id
+ * @apiGroup Post
+ * @apiUse AuthHeader
+ * @apiUse SuccessResponse
+ * @apiSuccessExample example
+ * { "success":true, "status": 200 }
+ * */
+export async function remove(ctx) {
+    const {postId} = ctx.request.body;
+    const post = await Post.findById(postId);
+    const courseId = post.courseId;
+
+    const user = ctx.authService.getMinimalUser();
+    await user.findCourseById(courseId);
+
+    await post.remove();
+
+    return response.json(ctx);
+}

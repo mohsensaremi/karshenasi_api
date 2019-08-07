@@ -122,6 +122,22 @@ PostSchema.methods.getGrades = async function (userId) {
     return data;
 };
 
+PostSchema.pre('remove', async function () {
+    const postAttendances = await PostAttendance.find({
+        postId: this._id,
+    });
+    for (let i = 0; i < postAttendances.length; i++) {
+        await postAttendances[i].remove();
+    }
+
+    const postGrades = await PostGrade.find({
+        postId: this._id,
+    });
+    for (let i = 0; i < postGrades.length; i++) {
+        await postGrades[i].remove();
+    }
+});
+
 const Post = conn.model('Post', PostSchema);
 
 export default Post;

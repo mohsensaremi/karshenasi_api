@@ -312,7 +312,6 @@ export async function members(ctx) {
 
 }
 
-
 /**
  * @api {post} /course/remove remove
  * @apiDescription remove course by id

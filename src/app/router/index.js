@@ -36,6 +36,7 @@ router.post('/post/submit', userTypeMiddleware(['instructor']), PostController.s
 router.all('/post/by-course-id', PostController.postsByCourseId);
 router.all('/post/attendances', PostController.attendances);
 router.all('/post/grades', PostController.grades);
+router.post('/post/remove', userTypeMiddleware(['instructor']), PostController.remove);
 
 router.all('/calendar/get', CalendarController.getCalendar);
 
