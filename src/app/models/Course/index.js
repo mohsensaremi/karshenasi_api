@@ -105,6 +105,16 @@ CourseSchema.methods.findPostById = async function (postId, throwErr = true) {
     return post;
 };
 
+CourseSchema.pre('remove', async function () {
+    const posts = await Post.find({
+        courseId: this._id,
+    });
+
+    for (let i = 0; i < posts.length; i++) {
+        await posts[i].remove();
+    }
+});
+
 const Course = conn.model('Course', CourseSchema);
 
 export default Course;

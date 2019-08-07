@@ -274,15 +274,12 @@ export async function similar(ctx) {
             title: new RegExp(regexUtil.startOfWordInAnyOrder(input), "i"),
         }).populate('user');
 
-        const authUserId = ctx.authService.getUserId()
+        const authUserId = ctx.authService.getUserId();
         data = await Course.setUserIsMember(data, authUserId);
         data = await Course.setUserIsOwner(data, authUserId);
 
         return response.json(ctx, {
-            data: data.map(x => pick(x, [
-                '_id', 'id', 'title', 'hasPassword',
-                'user._id', 'user.id', 'user.firstName', 'user.lastName'
-            ])),
+            data,
         });
     }
 
@@ -313,4 +310,24 @@ export async function members(ctx) {
         data,
     });
 
+}
+
+
+/**
+ * @api {post} /course/remove remove
+ * @apiDescription remove course by id
+ * @apiParam {String} courseId course id
+ * @apiGroup Course
+ * @apiUse AuthHeader
+ * @apiUse SuccessResponse
+ * @apiSuccessExample example
+ * { "success":true, "status": 200 }
+ * */
+export async function remove(ctx) {
+    const {courseId} = ctx.request.body;
+    const user = ctx.authService.getMinimalUser();
+    const course = await user.findCourseById(courseId);
+    await course.remove();
+
+    return response.json(ctx);
 }
