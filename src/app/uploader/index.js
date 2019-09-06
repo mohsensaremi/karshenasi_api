@@ -5,7 +5,7 @@ class Uploader {
     constructor(files, path, publicPath = true) {
         this.files = files.map(f => pick(f, ['name', 'fresh', 'deleted']));
         this.path = path;
-        fs.ensureDirSync(`${STORAGE_PATH}/${this.path}`);
+        fs.ensureDirSync(this.getFullPath(""));
         this.publicPath = publicPath;
     }
 

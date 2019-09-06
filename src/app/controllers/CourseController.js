@@ -3,7 +3,6 @@ import Course from 'app/models/Course';
 import CourseMember from 'app/models/CourseMember';
 import bcrypt from 'bcrypt';
 import * as regexUtil from 'utils/regex';
-import pick from 'lodash/pick';
 
 /**
  * @api {post} /course/submit submit

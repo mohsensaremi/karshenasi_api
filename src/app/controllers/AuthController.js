@@ -1,4 +1,7 @@
 import response from 'app/response';
+import bcrypt from "bcrypt";
+import Uploader from "../uploader";
+import pick from 'lodash/pick';
 
 /**
  * @api {post} /login login
@@ -126,4 +129,70 @@ export async function logout(ctx) {
     } catch (e) {
         return response.validatorError(ctx, [{logout: e.message}]);
     }
+}
+
+/**
+ * @api {post} /update-profile submit
+ * @apiDescription update authenticated user profile
+ * @apiGroup Auth
+ * @apiParam {String} [firstName]
+ * @apiParam {String} [lastName]
+ * @apiParam {String} [email]
+ * @apiParam {String} [password] if provided, password will be updated
+ * @apiParam {String} [passwordConfirmation]
+ * @apiUse AuthHeader
+ * @apiUse SuccessResponse
+ * @apiSuccess {Object} data current authenticated user data. check `Model > User`
+ * @apiSuccessExample example
+ * { "success":true, "status": 200, "data": Object }
+ * */
+export async function updateProfile(ctx) {
+
+    const user = await ctx.authService.getUser();
+    const data = pick(ctx.request.body, ['firstName', 'lastName', 'email', 'password', 'passwordConfirmation']);
+    if (data.password) {
+        if (data.password !== data.passwordConfirmation) {
+            return response.validatorError(ctx, [{passwordConfirmation: 'کلمه عبور با تاییدیه مطابقت ندارد'}]);
+        }
+
+        data.password = bcrypt.hashSync(data.password, 10);
+    } else {
+        delete data.password;
+    }
+
+    user.set(data);
+    await user.save();
+
+    return response.json(ctx, {
+        data: user,
+    });
+}
+
+/**
+ * @api {post} /update-avatar submit
+ * @apiDescription update authenticated user avatar
+ * @apiGroup Auth
+ * @apiParam {UploadFile[]} files array of files. check `Model > UploadFile`
+ * @apiUse AuthHeader
+ * @apiUse SuccessResponse
+ * @apiSuccess {Object} data current authenticated user data. check `Model > User`
+ * @apiSuccessExample example
+ * { "success":true, "status": 200, "data": Object }
+ * */
+export async function updateAvatar(ctx) {
+
+    const user = await ctx.authService.getUser();
+    const {files} = ctx.request.body;
+
+    if (Array.isArray(files)) {
+        const uploader = new Uploader(files, `user/${user._id}`);
+        uploader.upload();
+        uploader.delete();
+        user.avatar = uploader.getFiles();
+        await user.save();
+    }
+
+    return response.json(ctx, {
+        data: user,
+    });
 }

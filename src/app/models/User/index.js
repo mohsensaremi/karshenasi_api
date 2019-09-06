@@ -15,19 +15,32 @@ export const UserSchema = new Schema({
     type: {type: String, required: true, enum: Object.values(UserType)},
     password: {type: String, required: true},
     email: {type: String, required: true},
+    avatar: {type: [String]},
 }, {
     toObject: {
         virtuals: true,
+        getters: true,
         transform: function (doc, ret) {
             delete ret.password;
         },
     },
     toJSON: {
         virtuals: true,
+        getters: true,
         transform: function (doc, ret) {
             delete ret.password;
         },
     },
+});
+
+UserSchema.path('avatar').get(function (v) {
+    if (Array.isArray(v)) {
+        return v.map(x => ({
+            name: x,
+            url: `${process.env.APP_URL}/storage/user/${this._id}/${x}`,
+        }));
+    }
+    return [];
 });
 
 UserSchema.virtual('typeFa').get(function () {
