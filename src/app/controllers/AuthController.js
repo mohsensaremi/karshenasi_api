@@ -132,7 +132,7 @@ export async function logout(ctx) {
 }
 
 /**
- * @api {post} /update-profile submit
+ * @api {post} /update-profile update profile
  * @apiDescription update authenticated user profile
  * @apiGroup Auth
  * @apiParam {String} [firstName]
@@ -169,7 +169,7 @@ export async function updateProfile(ctx) {
 }
 
 /**
- * @api {post} /update-avatar submit
+ * @api {post} /update-avatar update avatar
  * @apiDescription update authenticated user avatar
  * @apiGroup Auth
  * @apiParam {UploadFile[]} files array of files. check `Model > UploadFile`
