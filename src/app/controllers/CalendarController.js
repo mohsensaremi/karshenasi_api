@@ -5,8 +5,8 @@ import chunk from 'lodash/chunk';
 /**
  * @api {get} /calendar/get get calendar
  * @apiDescription get calendar data
+ * @apiGroup Calendar
  * @apiParam {String} [month] get calendar for specific month. if not provided current month calendar returned
- * @apiGroup Course
  * @apiParam {String} id course id
  * @apiParam {String} [withUser] if provided, the course owner data will be returned
  * @apiUse AuthHeader
