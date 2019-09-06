@@ -9,11 +9,11 @@ import chunk from 'lodash/chunk';
  * @apiParam {String} [month] get calendar for specific month. if not provided current month calendar returned
  * @apiUse AuthHeader
  * @apiUse SuccessResponse
- * @apiSuccess {Object[][]} data calendar data. each item represent week
- * @apiSuccess {Object} data[][].day calendar day.if 0 it means this day is not for this month and should not shot anything for it. its just for grid
- * @apiSuccess {Object[]} data[][].alert array of alert for one day
- * @apiSuccess {Object[]} data[][].alert.type alert type
- * @apiSuccess {Object[]} data[][].alert.text alert text
+ * @apiSuccess {Object[][]} data 2d array for week and days
+ * @apiSuccess {Number} day calendar day.if 0 it means this day is not for this month and should not shot anything for it. its just for grid
+ * @apiSuccess {Object[]} alert array of alert for one day
+ * @apiSuccess {Number} alert.type alert type
+ * @apiSuccess {String} alert.text alert text
  * @apiSuccess {String} monthName current month name
  * @apiSuccess {String} nextMonth use it for getting next month calendar
  * @apiSuccess {String} prevMonth use it for getting prev month calendar
