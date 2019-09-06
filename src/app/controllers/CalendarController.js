@@ -7,8 +7,6 @@ import chunk from 'lodash/chunk';
  * @apiDescription get calendar data
  * @apiGroup Calendar
  * @apiParam {String} [month] get calendar for specific month. if not provided current month calendar returned
- * @apiParam {String} id course id
- * @apiParam {String} [withUser] if provided, the course owner data will be returned
  * @apiUse AuthHeader
  * @apiUse SuccessResponse
  * @apiSuccess {Object[][]} data calendar data. each item represent week
