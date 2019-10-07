@@ -3,6 +3,7 @@ import {conn} from 'config/database';
 import UserToken from 'app/models/UserToken';
 import Course from "../Course";
 import ValidatorException from 'app/exeptions/ValidatorException';
+import i18n from 'config/i18n';
 
 export const UserType = {
     instructor: "instructor",
@@ -44,12 +45,7 @@ UserSchema.path('avatar').get(function (v) {
 });
 
 UserSchema.virtual('typeFa').get(function () {
-    switch (this.type) {
-        case UserType.instructor:
-            return "استاد";
-        case UserType.student:
-            return "دانشجو";
-    }
+    return i18n.__(this.type);
 });
 
 UserSchema.methods.generateToken = async function () {
