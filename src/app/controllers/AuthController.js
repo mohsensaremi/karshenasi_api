@@ -199,3 +199,32 @@ export async function updateAvatar(ctx) {
         data: user,
     });
 }
+
+/**
+ * @api {post} /update-cover update avatar
+ * @apiDescription update authenticated user avatar
+ * @apiGroup Auth
+ * @apiParam {UploadFile[]} files array of files. check `Model > UploadFile`
+ * @apiUse AuthHeader
+ * @apiUse SuccessResponse
+ * @apiSuccess {Object} data current authenticated user data. check `Model > User`
+ * @apiSuccessExample example
+ * { "success":true, "status": 200, "data": Object }
+ * */
+export async function updateCover(ctx) {
+
+    const user = await ctx.authService.getUser();
+    const {files} = ctx.request.body;
+
+    if (Array.isArray(files)) {
+        const uploader = new Uploader(files, `user/${user._id}`);
+        uploader.upload();
+        uploader.delete();
+        user.cover = uploader.getFiles();
+        await user.save();
+    }
+
+    return response.json(ctx, {
+        data: user,
+    });
+}

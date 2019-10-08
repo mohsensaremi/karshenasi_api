@@ -20,6 +20,7 @@ router.all('/me', AuthController.me);
 router.post('/logout', AuthController.logout);
 router.post('/update-profile', AuthController.updateProfile);
 router.post('/update-avatar', AuthController.updateAvatar);
+router.post('/update-cover', AuthController.updateCover);
 
 router.post('/upload/tmp', UploadController.tmp);
 

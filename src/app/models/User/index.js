@@ -17,6 +17,7 @@ export const UserSchema = new Schema({
     password: {type: String, required: true},
     email: {type: String, required: true},
     avatar: {type: [String]},
+    cover: {type: [String]},
 }, {
     toObject: {
         virtuals: true,
@@ -35,6 +36,16 @@ export const UserSchema = new Schema({
 });
 
 UserSchema.path('avatar').get(function (v) {
+    if (Array.isArray(v)) {
+        return v.map(x => ({
+            name: x,
+            url: `${process.env.APP_URL}/storage/user/${this._id}/${x}`,
+        }));
+    }
+    return [];
+});
+
+UserSchema.path('cover').get(function (v) {
     if (Array.isArray(v)) {
         return v.map(x => ({
             name: x,
