@@ -68,8 +68,8 @@ export async function getCalendar(ctx) {
     }
 
     return response.json(ctx, {
-        nextMonth: momentLocale(startOfMonth).add(jDaysInMonth, 'days').startOf('jMonth').format('YYYY-M-D HH:mm:ss'),
-        prevMonth: momentLocale(startOfMonth).add(-1, 'days').startOf('jMonth').format('YYYY-M-D HH:mm:ss'),
+        nextMonth: momentLocale(startOfMonth).add(jDaysInMonth, 'days').startOf(locale === "fa" ? 'jMonth' : "month").format('YYYY-M-D HH:mm:ss'),
+        prevMonth: momentLocale(startOfMonth).add(-1, 'days').startOf(locale === "fa" ? 'jMonth' : "month").format('YYYY-M-D HH:mm:ss'),
         monthName: momentLocale(startOfMonth).lang(locale).format(locale === "fa" ? "jMMMM" : "MMMM"),
         data: chunk(monthDays, 7),
     });
