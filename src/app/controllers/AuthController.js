@@ -149,8 +149,11 @@ export async function logout(ctx) {
 export async function updateProfile(ctx) {
 
     const user = await ctx.authService.getUser();
-    const data = pick(ctx.request.body, ['firstName', 'lastName', 'email', 'password', 'passwordConfirmation']);
+    const data = pick(ctx.request.body, ['firstName', 'lastName', 'email', 'password', 'passwordConfirmation', "oldPassword"]);
     if (data.password) {
+        if (!bcrypt.compareSync(data.oldPassword, user.password.replace('$2y$', '$2b$'))) {
+            return response.validatorError(ctx, [{passwordConfirmation: 'oldPasswordWrong'}]);
+        }
         if (data.password !== data.passwordConfirmation) {
             return response.validatorError(ctx, [{passwordConfirmation: 'کلمه عبور با تاییدیه مطابقت ندارد'}]);
         }
