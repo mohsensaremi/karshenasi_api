@@ -13,6 +13,14 @@ export const PostType = {
     grade: "grade",
 };
 
+export const FileSchema = new Schema({
+    name: {type: String, required: true},
+    fileName: {type: String, required: true},
+}, {
+    _id: false,
+    timestamps: false,
+});
+
 export const PostSchema = new Schema({
     userId: {type: Schema.Types.ObjectId, required: true},
     courseId: {type: Schema.Types.ObjectId, required: true},
@@ -20,14 +28,15 @@ export const PostSchema = new Schema({
     title: {type: String, required: true},
     content: {type: String},
     dueDate: {type: Date, default: null},
-    files: {type: [String]},
+    files: {type: [FileSchema]},
 });
 
 PostSchema.path('files').get(function (v) {
     if (Array.isArray(v)) {
-        return v.map(x => ({
-            name: x,
-            url: `${process.env.APP_URL}/storage/course/${this.courseId}/post/${this._id}/${x}`,
+        return v.filter(x => x && x.name && x.fileName).map(x => ({
+            fileName: x.fileName,
+            name: x.name,
+            url: `${process.env.APP_URL}/storage/course/${this.courseId}/post/${this._id}/${x.name}`,
         }));
     }
     return [];

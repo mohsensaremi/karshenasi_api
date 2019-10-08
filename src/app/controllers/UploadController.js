@@ -28,6 +28,7 @@ export async function tmp(ctx) {
         data: {
             name: fullName,
             fresh: true,
+            fileName: file.name,
         },
     });
 };

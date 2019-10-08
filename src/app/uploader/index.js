@@ -3,7 +3,7 @@ import fs from 'fs-extra';
 
 class Uploader {
     constructor(files, path, publicPath = true) {
-        this.files = files.map(f => pick(f, ['name', 'fresh', 'deleted']));
+        this.files = files.map(f => pick(f, ['name', 'fresh', 'deleted', "fileName"]));
         this.path = path;
         fs.ensureDirSync(this.getFullPath(""));
         this.publicPath = publicPath;
@@ -34,7 +34,10 @@ class Uploader {
     }
 
     getFiles() {
-        return this.files.filter(f => !f.deleted).map(f => f.name);
+        return this.files.filter(f => !f.deleted).map(f => ({
+            name: f.name,
+            fileName: f.fileName,
+        }));
     }
 }
 
