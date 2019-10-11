@@ -18,6 +18,7 @@ import ValidatorException from "app/exeptions/ValidatorException";
  * @apiParam {UploadFile[]} files array of files. check `Model > UploadFile`
  * @apiParam {Object} grade if type is `grade`, {[key]=>[value]} object of grades
  * @apiParam {Object} attendance if type is `attendance`, {[key]=>[value]} object of attendances
+ * @apiParam {Boolean} [sendUpdateNotification] if post is edited, send notification for members or not
  * @apiUse AuthHeader
  * @apiUse SuccessResponse
  * @apiSuccess {String} id submitted post id
