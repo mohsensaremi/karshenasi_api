@@ -75,3 +75,13 @@
  * @apiParam {String} name file name
  * @apiParam {String} url url to download file
  * */
+
+/**
+ * @api {model} /model/notification Notification
+ * @apiGroup Model
+ * @apiParam {String} _id
+ * @apiParam {String} id same as _id
+ * @apiParam {String} notificationId
+ * @apiParam {String="Post"} notificationType
+ * @apiParam {Object} [notifiable] based on `notificationType` it could be `Model > Post` or null
+ * */
