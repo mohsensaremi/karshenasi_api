@@ -31,6 +31,13 @@ export const PostSchema = new Schema({
     files: {type: [FileSchema]},
 });
 
+PostSchema.virtual('course', {
+    ref: 'Course',
+    localField: 'courseId',
+    foreignField: '_id',
+    justOne: true,
+});
+
 PostSchema.path('files').get(function (v) {
     if (Array.isArray(v)) {
         return v.filter(x => x && x.name && x.fileName).map(x => ({

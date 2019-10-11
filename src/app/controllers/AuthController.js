@@ -202,7 +202,7 @@ export async function updateAvatar(ctx) {
 
 /**
  * @api {post} /update-cover update avatar
- * @apiDescription update authenticated user avatar
+ * @apiDescription update authenticated user cover
  * @apiGroup Auth
  * @apiParam {UploadFile[]} files array of files. check `Model > UploadFile`
  * @apiUse AuthHeader

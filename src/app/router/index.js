@@ -4,6 +4,7 @@ import * as PostController from 'app/controllers/PostController';
 import * as CalendarController from 'app/controllers/CalendarController';
 import * as UserController from 'app/controllers/UserController';
 import * as UploadController from 'app/controllers/UploadController';
+import * as NotificationController from 'app/controllers/NotificationController';
 import Router from "koa-router";
 import authMiddleware from 'app/middlewares/auth';
 import userTypeMiddleware from 'app/middlewares/userType';
@@ -21,6 +22,10 @@ router.post('/logout', AuthController.logout);
 router.post('/update-profile', AuthController.updateProfile);
 router.post('/update-avatar', AuthController.updateAvatar);
 router.post('/update-cover', AuthController.updateCover);
+
+router.all('/notification/list', NotificationController.list);
+router.all('/notification/count', NotificationController.count);
+router.post('/notification/read', NotificationController.read);
 
 router.post('/upload/tmp', UploadController.tmp);
 

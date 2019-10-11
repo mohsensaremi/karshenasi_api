@@ -1,5 +1,6 @@
 import response from 'app/response';
 import Post, {PostType} from 'app/models/Post';
+import SendPostNotifications from 'app/jobs/SendPostNotifications';
 import Course from "app/models/Course";
 import Uploader from "../uploader";
 import ValidatorException from "app/exeptions/ValidatorException";
@@ -26,7 +27,7 @@ import ValidatorException from "app/exeptions/ValidatorException";
  * { "success":true, "status": 200, "id": String, "edit": Boolean, "data": Object }
  * */
 export async function submit(ctx) {
-    const {title, content, courseId, id, type, dueDate, files, attendance, grade} = ctx.request.body;
+    const {title, content, courseId, id, type, dueDate, files, attendance, grade, sendUpdateNotification} = ctx.request.body;
 
     ctx.checkBody('title').notEmpty("وارد کردن عنوان اجباری است");
     if (ctx.errors) {
@@ -83,6 +84,12 @@ export async function submit(ctx) {
 
     if (type === PostType.grade && grade) {
         await post.submitGrade(grade);
+    }
+
+    if (!edit || sendUpdateNotification) {
+        SendPostNotifications.dispatch({
+            postId: post.id,
+        });
     }
 
     return response.json(ctx, {

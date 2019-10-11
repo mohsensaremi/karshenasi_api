@@ -5,3 +5,4 @@ global.STORAGE_PATH = `${BASE_PATH}/storage`;
 import 'config/dotenv';
 import 'config/database';
 import 'config/moment';
+import 'config/queue';
