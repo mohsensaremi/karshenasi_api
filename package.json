@@ -17,6 +17,8 @@
     "bcrypt": "^3.0.6",
     "dataloader": "^1.4.0",
     "dotenv": "^8.0.0",
+    "express": "^4.17.1",
+    "fluture": "^11.0.3",
     "fs-extra": "^8.0.1",
     "i18n": "^0.8.3",
     "ioredis": "^4.9.5",
@@ -35,7 +37,8 @@
     "moment-jalaali": "^0.8.3",
     "mongoose": "^5.5.12",
     "uuid": "^3.3.2",
-    "winston": "^3.2.1"
+    "winston": "^3.2.1",
+    "yup": "^0.27.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.4.4",
@@ -43,8 +46,13 @@
     "@babel/node": "^7.2.2",
     "@babel/plugin-proposal-class-properties": "^7.4.4",
     "@babel/preset-env": "^7.4.4",
+    "@types/express": "^4.17.2",
+    "@types/node": "^12.12.6",
+    "@types/yup": "^0.26.24",
     "apidoc": "^0.17.7",
     "jest": "^24.8.0",
-    "supertest": "^4.0.2"
+    "supertest": "^4.0.2",
+    "ts-node": "^8.4.1",
+    "typescript": "^3.7.2"
   }
 }
