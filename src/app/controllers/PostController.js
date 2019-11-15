@@ -167,6 +167,7 @@ export async function attendances(ctx) {
         data = await post.getAttendances();
     } else if (userIsMember) {
         data = await post.getAttendances(userId);
+        data = data[userId];
     }
 
     return response.json(ctx, {data});
@@ -204,6 +205,7 @@ export async function grades(ctx) {
         data = await post.getGrades();
     } else if (userIsMember) {
         data = await post.getGrades(userId);
+        data = data[userId];
     }
 
     return response.json(ctx, {data});
