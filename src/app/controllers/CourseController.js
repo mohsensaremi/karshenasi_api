@@ -301,14 +301,22 @@ export async function similar(ctx) {
 export async function members(ctx) {
     const {courseId} = ctx.requestData();
     const user = ctx.authService.getMinimalUser();
-    const course = await user.findCourseById(courseId);
-    course.checkUserIsOwner(user._id);
-
-    const data = await course.getMembers();
+    const course = await Course.findById(courseId);
+    const userIsOwner = course.checkUserIsOwner(user._id, false);
+    const userIsMember = await course.checkUserIsMember(user._id);
+    if (userIsOwner) {
+        const data = await course.getMembers();
+        return response.json(ctx, {
+            data,
+        });
+    } else if (userIsMember) {
+        return response.json(ctx, {
+            data: [await ctx.authService.getUser()],
+        });
+    }
     return response.json(ctx, {
-        data,
+        data: [],
     });
-
 }
 
 /**
